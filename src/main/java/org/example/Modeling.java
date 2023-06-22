@@ -1,5 +1,7 @@
 package org.example;
 
+import javafx.animation.PathTransition;
+import javafx.animation.SequentialTransition;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -27,6 +29,8 @@ public class Modeling {
     }
     public void change(){
         Customer c =new Customer();
+        PathTransition p=c.movementYX(200,200);
+        p.play();
         Line wallLeft=new Line(0.0,50.0,700.0,50.0);
         Line wallRight=new Line(800.0,50.0,1200.0,50.0);
         wallLeft.setStrokeWidth(2);

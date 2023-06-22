@@ -6,6 +6,7 @@ import javafx.scene.shape.Circle;
 public class Cashier {
     static int quantity;
     static final int appearY=75;
+
     private Circle model;
     public Cashier(){
         model=new Circle();
