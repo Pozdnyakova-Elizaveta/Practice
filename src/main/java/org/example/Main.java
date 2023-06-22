@@ -6,6 +6,8 @@ import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -45,10 +47,15 @@ public class Main extends Application {
         start.setLayoutX(500);
         start.setLayoutY(500);
         start.setPrefSize(200,50);
-        start.setOnAction(e -> {
-            stage.hide();
-            Modeling modeling=new Modeling(1,1,1,1);
-            modeling.change();
+        Slider choiceCustomer=new Slider(1.0,100.0,5.0);
+        choiceCustomer.setLayoutX(800);
+        choiceCustomer.setLayoutY(140);
+        choiceCustomer.setShowTickLabels(true);
+        Label label = new Label(String.valueOf((int)(choiceCustomer.getValue())));
+        label.setLayoutX(1000);
+        label.setLayoutY(140);
+        choiceCustomer.valueProperty().addListener((observable, oldValue, newValue) -> {
+            label.setText(String.valueOf(newValue.intValue()));
         });
         ObservableList<Integer> choiceConsultant = FXCollections.observableArrayList(0,1,2,3,4,5,6);
         ObservableList<Integer> choiceCashier = FXCollections.observableArrayList(1,2,3,4,5,6);
@@ -56,18 +63,26 @@ public class Main extends Application {
         ChoiceBox<Integer> choiceBoxConsultant = new ChoiceBox<Integer>(choiceConsultant);
         choiceBoxConsultant.setLayoutX(800);
         choiceBoxConsultant.setLayoutY(260);
+        choiceBoxConsultant.setValue(0);
         ChoiceBox<Integer> choiceBoxCashier = new ChoiceBox<Integer>(choiceCashier);
         choiceBoxCashier.setLayoutX(800);
         choiceBoxCashier.setLayoutY(180);
+        choiceBoxCashier.setValue(1);
         ChoiceBox<Integer> choiceBoxShelf = new ChoiceBox<Integer>(choiceShelf);
         choiceBoxShelf.setLayoutX(800);
         choiceBoxShelf.setLayoutY(220);
-        Group group = new Group(title, numberCustomer, numberCashier, numberConsultant, numberShelf, start, choiceBoxCashier, choiceBoxConsultant,choiceBoxShelf);
+        choiceBoxShelf.setValue(1);
+        Group group = new Group(title, numberCustomer, numberCashier, numberConsultant, numberShelf, start, choiceBoxCashier, choiceBoxConsultant,choiceBoxShelf,choiceCustomer,label);
         Scene scene = new Scene(group);
         stage.setScene(scene);
         stage.setTitle("Практика");
         stage.setWidth(1200);
         stage.setHeight(700);
+        start.setOnAction(e -> {
+            stage.hide();
+            Modeling modeling=new Modeling(choiceBoxCashier.getValue(),(int)choiceCustomer.getValue(),choiceBoxShelf.getValue(),choiceBoxConsultant.getValue());
+            modeling.change();
+        });
         stage.show();
     }
 }

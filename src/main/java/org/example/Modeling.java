@@ -42,15 +42,20 @@ public class Modeling {
         Line wallStockLeft=new Line(0.0,450.0,75.0,450.0);
         wallStockLeft.setStrokeWidth(2);
         Group group = new Group(c.getModel(), wallLeft,wallRight,wallStockRight,wallStockLeft);
-        //Consultant[] co=new Consultant[5];
-        //Cashier[] ca= new Cashier[5];
-        Shelf[] s= new Shelf[8];
-        for (int i=0;i!=8;i++) {
-            //co[i]=new Consultant();
-            //ca[i]=new Cashier();
+        Consultant[] co=new Consultant[numberConsultant];
+        int i;
+        for (i=0;i!=numberConsultant;i++){
+            co[i]=new Consultant();
+            group.getChildren().add(co[i].getModel());
+        }
+        Cashier[] ca= new Cashier[numberCashier];
+        for (i=0;i!=numberCashier;i++){
+            ca[i]=new Cashier();
+            group.getChildren().add(ca[i].getModel());
+        }
+        Shelf[] s= new Shelf[numberShelf];
+        for (i=0;i!=numberShelf;i++) {
             s[i]=new Shelf();
-            //group.getChildren().add(co[i].getModel());
-            //group.getChildren().add(ca[i].getModel());
             group.getChildren().add(s[i].getModel());
 
         }
