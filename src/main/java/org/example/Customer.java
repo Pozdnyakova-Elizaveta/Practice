@@ -1,10 +1,20 @@
 package org.example;
 
+import javafx.animation.Animation;
+import javafx.animation.FillTransition;
 import javafx.animation.PathTransition;
+import javafx.animation.SequentialTransition;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polyline;
+import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static java.lang.Math.abs;
 
@@ -18,42 +28,51 @@ public class Customer {
     private int validQueue;
     private Circle model;
     public Customer(){
-        movementSpeed=(int)(Math.random()*1000)+200;
+        movementSpeed=(int)(Math.random()*1000)+400;
         model=new Circle();
         model.setCenterX(appearX);
         model.setCenterY(appearY);
         model.setRadius(15);
         model.setFill(Color.WHITE);
-        model.setStrokeWidth(2);
+        model.setStrokeWidth(5);
         model.setStroke(Color.BLACK);
     }
     public Circle getModel(){
         return  model;
     }
-    public PathTransition movementYX(double x, double y){
-        Polyline path=new Polyline();
-        path.getPoints().addAll(new Double[]{
-                model.getCenterX(), model.getCenterY(),
-                model.getCenterX(), y,
-                x, y});
-        int time=(int)((abs(model.getCenterX()-x)+abs(model.getCenterY()-y))/100*movementSpeed);
-        PathTransition transitionYX = new PathTransition(Duration.millis(time),path);
-        transitionYX.setNode(model);
-        this.model.setCenterX(x);
-        this.model.setCenterY(y);
-        return transitionYX;
+    public int getValidQueue(){
+        return validQueue;
     }
-    public PathTransition movementXY(double x, double y){
-        Polyline path=new Polyline();
-        path.getPoints().addAll(new Double[]{
-                model.getCenterX(), model.getCenterY(),
-                x, model.getCenterY(),
-                x, y});
-        int time=(int)((abs(model.getCenterX()-x)+abs(model.getCenterY()-y))/100*movementSpeed);
-        PathTransition transitionXY = new PathTransition(Duration.millis(time),path);
-        transitionXY.setNode(model);
-        this.model.setCenterX(x);
-        this.model.setCenterY(y);
-        return transitionXY;
+    public void movementX(int x, GraphicsContext gc){
+        Timer timer=new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (x>model.getCenterX()){
+                    model.setCenterX(model.getCenterX()+1);
+                }
+                if (x<model.getCenterX()){
+                    model.setCenterX(model.getCenterX()-1);
+                }
+                if (x==model.getCenterX()) timer.cancel();
+            }
+        }, 0,10);
+
     }
+    public void movementY(int y, GraphicsContext gc){
+        Timer timer=new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (y<model.getCenterY()){
+                    model.setCenterY(model.getCenterY()-1);
+                }
+                if (y>model.getCenterY()){
+                    model.setCenterY(model.getCenterY()+1);
+                }
+                if (y== model.getCenterY()) timer.cancel();
+            }
+        }, 0,10);
+    }
+
 }
