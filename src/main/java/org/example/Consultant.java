@@ -31,7 +31,7 @@ public class Consultant {
     public Circle getModel(){
         return  model;
     }
-    public void movementX(int x, GraphicsContext gc){
+    public void movementX(int x){
         Timer timer=new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -47,7 +47,7 @@ public class Consultant {
         }, 0,10);
 
     }
-    public void movementY(int y, GraphicsContext gc){
+    public void movementY(int y){
         Timer timer=new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -61,5 +61,20 @@ public class Consultant {
                 if (y== model.getCenterY()) timer.cancel();
             }
         }, 0,10);
+    }
+    public void updateConsultant(GraphicsContext gc){
+        gc.setStroke(model.getStroke());
+        gc.setLineWidth(model.getStrokeWidth());
+        gc.setFill(model.getFill()); // установка цвета заливки
+        gc.strokeOval(model.getCenterX() - model.getRadius(), model.getCenterY() - model.getRadius(), model.getRadius() * 2, model.getRadius() * 2); // рисование круга на Canvas
+        gc.fillOval(model.getCenterX() - model.getRadius(), model.getCenterY() - model.getRadius(), model.getRadius() * 2, model.getRadius() * 2);
+    }
+    public void movement(int y) {
+        if (y < model.getCenterY()) {
+            model.setCenterY(model.getCenterY() - 1);
+        }
+        if (y > model.getCenterY()) {
+            model.setCenterY(model.getCenterY() + 1);
+        }
     }
 }

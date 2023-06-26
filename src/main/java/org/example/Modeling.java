@@ -22,10 +22,10 @@ import java.util.TimerTask;
 
 public class Modeling {
     private Stage stage;
-    private int numberCashier;
-    private int numberCustomer;
-    private int numberShelf;
-    private int numberConsultant;
+    static int numberCashier;
+    static int numberCustomer;
+    static int numberShelf;
+    static int numberConsultant;
     private ArrayList<Consultant> co;
     private ArrayList<Cashier> ca;
     private ArrayList<Shelf> s;
@@ -61,19 +61,20 @@ public class Modeling {
             s.add(new Shelf());
             root.getChildren().add(s.get(i).getModel());
         }
-        for (i=0;i!=numberCustomer;i++) {
-            c.add(new Customer());
-        }
         Timer timer=new Timer();
         timer.schedule(new TimerTask() {
+            int count=0;
             @Override
             public void run() {
-                canvasUpdate(gc);
-                if (c.size()==0) timer.cancel();
+                if (count!=numberCustomer) {
+                    c.add(new Customer());
+                    cycle(c.get(c.size() - 1),gc);
+                    count++;
+                }
+                if (count==numberCustomer)
+                    if (c.size()==0) timer.cancel();
             }
-        }, 0,10);
-        c.get(0).movementY(400,gc);
-        co.get(0).movementX(100,gc);
+        }, 0, 1000);
         root.getChildren().add(canvas);
         wallPainting(root);
         Scene scene = new Scene(root);
@@ -84,6 +85,21 @@ public class Modeling {
         root.getChildren().add(cashRegister);
         stage.setScene(scene);
         stage.show();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                Timer time=new Timer();
+                time.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        canvasUpdate(gc);
+                        if (c.size()==0) time.cancel();
+                    }
+                }, 0,10);
+            }
+        };
+        Thread thread = new Thread(runnable);
+        thread.start();
     }
     public void wallPainting(Pane root){
         Line wallLeft=new Line(0.0,50.0,700.0,50.0);
@@ -104,21 +120,29 @@ public class Modeling {
     }
     public void canvasUpdate(GraphicsContext gc){
         int i;
-        gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
-        for (i=0;i!=co.size();i++) {
-            gc.setStroke(co.get(i).getModel().getStroke());
-            gc.setLineWidth(co.get(i).getModel().getStrokeWidth());
-            gc.setFill(co.get(i).getModel().getFill()); // установка цвета заливки
-            gc.strokeOval(co.get(i).getModel().getCenterX() - co.get(i).getModel().getRadius(), co.get(i).getModel().getCenterY() - co.get(i).getModel().getRadius(), co.get(i).getModel().getRadius() * 2, co.get(i).getModel().getRadius() * 2); // рисование круга на Canvas
-            gc.fillOval(co.get(i).getModel().getCenterX() -co.get(i).getModel().getRadius(), co.get(i).getModel().getCenterY() - co.get(i).getModel().getRadius(), co.get(i).getModel().getRadius() * 2, co.get(i).getModel().getRadius() * 2);
-        }
-        for (i=0;i!=c.size();i++){
-            gc.setStroke(c.get(i).getModel().getStroke());
-            gc.setLineWidth(c.get(i).getModel().getStrokeWidth());
-            gc.setFill(c.get(i).getModel().getFill()); // установка цвета заливки
-            gc.strokeOval(c.get(i).getModel().getCenterX() - c.get(i).getModel().getRadius(), c.get(i).getModel().getCenterY() - c.get(i).getModel().getRadius(), c.get(i).getModel().getRadius() * 2, c.get(i).getModel().getRadius() * 2); // рисование круга на Canvas
-            gc.fillOval(c.get(i).getModel().getCenterX() -c.get(i).getModel().getRadius(), c.get(i).getModel().getCenterY() - c.get(i).getModel().getRadius(), c.get(i).getModel().getRadius() * 2, c.get(i).getModel().getRadius() * 2);
-        }
+            gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
+            for (i = 0; i != co.size(); i++) co.get(i).updateConsultant(gc);
+            for (i = 0; i != c.size(); i++) c.get(i).updateCustomer(gc);
+    }
+    public void cycle(Customer cc, GraphicsContext gc){
+        cc.movementY(300);
+        Timer time=new Timer();
+        time.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                boolean fl = false;
+                for (int i = 0; i != numberCashier; i++) {
+                    if (ca.get(i).getQueueBuyers() != 0) fl = true;
+                }
+                boolean k=false;
+                if (fl == false && cc.getModel().getCenterY() == 300) {
+                    cc.angry();
+                    cc.movementY(Customer.appearY);
+                }
+                if (fl==false && cc.getModel().getCenterY()==Customer.appearY) c.remove(cc);
+            }
+        }, 0,10);
 
     }
+
 }

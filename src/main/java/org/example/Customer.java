@@ -13,8 +13,11 @@ import javafx.scene.shape.Polyline;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static java.lang.Math.abs;
 
@@ -43,7 +46,7 @@ public class Customer {
     public int getValidQueue(){
         return validQueue;
     }
-    public void movementX(int x, GraphicsContext gc){
+    public void movementX(int x){
         Timer timer=new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -59,20 +62,33 @@ public class Customer {
         }, 0,10);
 
     }
-    public void movementY(int y, GraphicsContext gc){
+    public void movementY(int y){
         Timer timer=new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (y<model.getCenterY()){
-                    model.setCenterY(model.getCenterY()-1);
-                }
-                if (y>model.getCenterY()){
-                    model.setCenterY(model.getCenterY()+1);
-                }
-                if (y== model.getCenterY()) timer.cancel();
+                        if (y < model.getCenterY()) {
+                            model.setCenterY(model.getCenterY() - 1);
+                        }
+                        if (y > model.getCenterY()) {
+                            model.setCenterY(model.getCenterY() + 1);
+                        }
+
+                        if (y == model.getCenterY()) {
+                            timer.cancel();
+                        }
             }
         }, 0,10);
+    }
+    public void angry(){
+        model.setFill(Color.RED);
+    }
+    public void updateCustomer(GraphicsContext gc){
+        gc.setStroke(model.getStroke());
+        gc.setLineWidth(model.getStrokeWidth());
+        gc.setFill(model.getFill()); // установка цвета заливки
+        gc.strokeOval(model.getCenterX() - model.getRadius(), model.getCenterY() - model.getRadius(), model.getRadius() * 2, model.getRadius() * 2); // рисование круга на Canvas
+        gc.fillOval(model.getCenterX() - model.getRadius(), model.getCenterY() - model.getRadius(), model.getRadius() * 2, model.getRadius() * 2);
     }
 
 }
