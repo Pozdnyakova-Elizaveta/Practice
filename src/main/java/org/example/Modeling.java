@@ -10,6 +10,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Rectangle;
@@ -60,6 +61,7 @@ public class Modeling {
         for (i=0;i!=numberShelf;i++) {
             s.add(new Shelf());
             root.getChildren().add(s.get(i).getModel());
+            root.getChildren().add(s.get(i).getText());
         }
         Timer timer=new Timer();
         timer.schedule(new TimerTask() {
@@ -74,7 +76,13 @@ public class Modeling {
                 if (count==numberCustomer)
                     if (c.size()==0) timer.cancel();
             }
-        }, 0, 1000);
+        }, 0, 2000);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                cicleConsultant();
+            }
+        },0,100);
         root.getChildren().add(canvas);
         wallPainting(root);
         Scene scene = new Scene(root);
@@ -125,24 +133,61 @@ public class Modeling {
             for (i = 0; i != c.size(); i++) c.get(i).updateCustomer(gc);
     }
     public void cycle(Customer cc, GraphicsContext gc){
-        cc.movementY(300);
+        cc.movementY(100);
         Timer time=new Timer();
         time.schedule(new TimerTask() {
             @Override
             public void run() {
                 boolean fl = false;
+                boolean fl1 = false;
+                int min_ch=ca.get(0).getQueueBuyers(), num=0;
                 for (int i = 0; i != numberCashier; i++) {
-                    if (ca.get(i).getQueueBuyers() != 0) fl = true;
+                    if (ca.get(i).getQueueBuyers() < 7) fl = true;
                 }
-                boolean k=false;
-                if (fl == false && cc.getModel().getCenterY() == 300) {
-                    cc.angry();
-                    cc.movementY(Customer.appearY);
+                if (fl == false) {
+                    if (cc.getModel().getCenterY()==100) {
+                        cc.angry();
+                        cc.movementY(Customer.appearY);
+                    }
+                    if (cc.getModel().getCenterY()==Customer.appearY) c.remove(cc);
                 }
-                if (fl==false && cc.getModel().getCenterY()==Customer.appearY) c.remove(cc);
+                if (fl==true && cc.getModel().getCenterY() == 100) {
+                    for (int i = 0; i != numberCashier; i++) {
+                        if (ca.get(i).getQueueBuyers() < min_ch) {
+                            num = i;
+                            min_ch = ca.get(i).getQueueBuyers();
+                        }
+                    }
+                    cc.movementCheckout(ca.get(num));
+                }
+                if (cc.num==0 && cc.getModel().getCenterX()==ca.get(num).getModel().getCenterX() && cc.getModel().getCenterY()==Cashier.appearY+90) {
+                    fl1=ca.get(num).service(cc);
+                    for (int i=0;i!=c.size(); i++){
+                        if (c.get(i).getModel().getCenterX()==ca.get(num).getModel().getCenterX()){
+                            if (c.get(i).num!=0) c.get(i).num=c.get(i).num-1;
+                            c.get(i).movementY((int)Cashier.appearY+90+35*num);
+                        }
+                    }
+                }
             }
-        }, 0,10);
+        }, 0,100);
 
+    }
+    public void cicleConsultant(){
+        int i, j=0;
+        boolean work=false;
+        for (i=0;i!=numberShelf;i++) {
+            if (s.get(i).getNumberGoods() == 0) {
+                while (j != numberConsultant && work != true) {
+                    if (co.get(j).getFree()) {
+                        co.get(j).displayGoods(s.get(i));
+                        work = true;
+                    }
+                    j++;
+                }
+            }
+            work=false;
+        }
     }
 
 }
