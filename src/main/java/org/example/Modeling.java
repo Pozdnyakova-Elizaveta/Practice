@@ -1,21 +1,14 @@
 package org.example;
 
-import javafx.animation.FillTransition;
-import javafx.animation.PathTransition;
-import javafx.animation.PauseTransition;
-import javafx.animation.SequentialTransition;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -70,7 +63,7 @@ public class Modeling {
             public void run() {
                 if (count!=numberCustomer) {
                     c.add(new Customer());
-                    cycle(c.get(c.size() - 1),gc);
+                    cicleCustomer(c.get(c.size() - 1));
                     count++;
                 }
                 if (count==numberCustomer)
@@ -79,10 +72,24 @@ public class Modeling {
         }, 0, 2000);
         timer.schedule(new TimerTask() {
             @Override
-            public void run() {
-                cicleConsultant();
+            public void  run(){
+                int i, j=0;
+                boolean work=false;
+                for (i=0;i!=numberShelf;i++) {
+                    if (s.get(i).getNumberGoods() == 0) {
+                        while (j != numberConsultant && work != true) {
+                            if (co.get(j).getStatus()=="wait") {
+                                co.get(j).setStatus("on stock");
+                                work = true;
+                            }
+                            j++;
+                        }
+                    }
+                    work=false;
+                }
             }
-        },0,100);
+        },0, 500);
+        for (i=0; i!=numberConsultant;i++) cicleConsultant(co.get(i));
         root.getChildren().add(canvas);
         wallPainting(root);
         Scene scene = new Scene(root);
@@ -132,62 +139,103 @@ public class Modeling {
             for (i = 0; i != co.size(); i++) co.get(i).updateConsultant(gc);
             for (i = 0; i != c.size(); i++) c.get(i).updateCustomer(gc);
     }
-    public void cycle(Customer cc, GraphicsContext gc){
-        cc.movementY(100);
-        Timer time=new Timer();
-        time.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                boolean fl = false;
-                boolean fl1 = false;
-                int min_ch=ca.get(0).getQueueBuyers(), num=0;
-                for (int i = 0; i != numberCashier; i++) {
-                    if (ca.get(i).getQueueBuyers() < 7) fl = true;
-                }
-                if (fl == false) {
-                    if (cc.getModel().getCenterY()==100) {
-                        cc.angry();
-                        cc.movementY(Customer.appearY);
-                    }
-                    if (cc.getModel().getCenterY()==Customer.appearY) c.remove(cc);
-                }
-                if (fl==true && cc.getModel().getCenterY() == 100) {
-                    for (int i = 0; i != numberCashier; i++) {
-                        if (ca.get(i).getQueueBuyers() < min_ch) {
-                            num = i;
-                            min_ch = ca.get(i).getQueueBuyers();
+    public void cicleCustomer(Customer cu){
+        Timer t=new Timer();
+            t.schedule(new TimerTask() {
+                Color color;
+                boolean dvih=false;
+                @Override
+                public void  run(){
+                    switch (cu.getStatus()){
+                        case "entry": {
+                            if (cu.getModel().getCenterY()!=100) cu.movmentYY(100);
+                            if (cu.getModel().getCenterY()==100){
+                                boolean fl=false;
+                                for (int i = 0; i != numberCashier; i++) {
+                                    if (ca.get(i).getQueueBuyers() < 7) fl = true;
+                                }
+                                if (fl==false){
+                                    color=Color.RED;
+                                    cu.setStatus("exit");
+                                }
+                                if (fl==true) cu.setStatus("to checkout");
+                            }
+                            break;
                         }
-                    }
-                    cc.movementCheckout(ca.get(num));
-                }
-                if (cc.num==0 && cc.getModel().getCenterX()==ca.get(num).getModel().getCenterX() && cc.getModel().getCenterY()==Cashier.appearY+90) {
-                    fl1=ca.get(num).service(cc);
-                    for (int i=0;i!=c.size(); i++){
-                        if (c.get(i).getModel().getCenterX()==ca.get(num).getModel().getCenterX()){
-                            if (c.get(i).num!=0) c.get(i).num=c.get(i).num-1;
-                            c.get(i).movementY((int)Cashier.appearY+90+35*num);
+                        case "to checkout":{
+                            int min_ch=ca.get(numberCashier-1).getQueueBuyers();
+                            int num=numberCashier-1;
+                            for (int i = numberCashier-1; i >=0; i--) {
+                                if (ca.get(i).getQueueBuyers() < min_ch) {
+                                    num = i;
+                                    min_ch = ca.get(i).getQueueBuyers();
+                                }
+                            }
+                            cu.movementCheckout(ca.get(num));
+                            cu.setNumCheckout(num);
+                            break;
                         }
-                    }
-                }
-            }
-        }, 0,100);
+                        case "queue":{
+                            if (cu.getNumQueue()==0) {
+                                ca.get(cu.getNumCheckout()).service(cu);
+                                color = Color.GREEN;
+                                if (ca.get(cu.getNumCheckout()).getQueueBuyers()!=0) dvih=true;
+                            }
+                            break;
+                        }
+                        case "exit":{
+                                cu.colorChange(color);
+                                if (cu.getModel().getCenterY()!=Customer.appearY && cu.getModel().getCenterX()==Customer.appearX) cu.movmentYY(Customer.appearY);
+                                if (cu.getModel().getCenterY()==Customer.appearY) {
+                                    c.remove(cu);
+                                }
+                                if (color==Color.GREEN){
+                                    if (cu.getModel().getCenterX()!=Customer.appearX && cu.getModel().getCenterX()!=ca.get(cu.getNumCheckout()).getModel().getCenterX()+30 && (cu.getModel().getCenterY()==Cashier.appearY+90)) cu.movmentXX((int)ca.get(cu.getNumCheckout()).getModel().getCenterX()+30);
+                                    if (cu.getModel().getCenterX()==ca.get(cu.getNumCheckout()).getModel().getCenterX()+30 && cu.getModel().getCenterY()!=Shelf.secondLine-60) cu.movmentYY(Shelf.secondLine-60);
+                                    if (cu.getModel().getCenterY()==Shelf.secondLine-60 && cu.getModel().getCenterX()!=Customer.appearX) cu.movmentXX(Customer.appearX);
 
-    }
-    public void cicleConsultant(){
-        int i, j=0;
-        boolean work=false;
-        for (i=0;i!=numberShelf;i++) {
-            if (s.get(i).getNumberGoods() == 0) {
-                while (j != numberConsultant && work != true) {
-                    if (co.get(j).getFree()) {
-                        co.get(j).displayGoods(s.get(i));
-                        work = true;
+                                }
+                                break;
+                        }
                     }
-                    j++;
+                    if (dvih){
+                        for (int i=0;i!=c.size();i++) {
+                            if (c.get(i).getStatus() == "queue" && c.get(i).getModel().getCenterX() == ca.get(cu.getNumCheckout()).getModel().getCenterX() && c.get(i).getModel().getCenterY() != Cashier.appearY + 90 + 35 * (c.get(i).getNumQueue() - 1))
+                               if (c.get(i).getModel().getCenterY() >= Cashier.appearY + 90) c.get(i).movmentYY(Cashier.appearY + 90 + 35 * (c.get(i).getNumQueue() - 1));
+                            if (c.get(i).getStatus() == "queue" && c.get(i).getModel().getCenterX() == ca.get(cu.getNumCheckout()).getModel().getCenterX() && c.get(i).getModel().getCenterY() == Cashier.appearY + 90 + 35 * (c.get(i).getNumQueue() - 1)) {
+                                c.get(i).setNumQueue(c.get(i).getNumQueue() - 1);
+                                if (c.get(i).getNumQueue()==0) dvih=false;
+                            }
+                        }
+                    }
                 }
-            }
-            work=false;
+            },0, cu.getMovementSpeed());
         }
+    public void cicleConsultant(Consultant c){
+        Timer t=new Timer();
+        int i;
+        for (i=0;i!=numberConsultant;i++) {
+            t.schedule(new TimerTask() {
+                @Override
+                public void  run(){
+                    switch (c.getStatus()){
+                        case "on stock":
+                            c.onStock();
+                            break;
+                        case "to shelf": {
+                            int i=0;
+                            while (s.get(i).getNumberGoods() != 0 && i!=numberShelf) i++;
+                            c.toShelf(s.get(i));
+                            break;
+                        }
+                        case "place":
+                            c.place(co.indexOf(c));
+                            break;
+                    }
+                }
+            },0, c.getMovementSpeed());
+        }
+
     }
 
 }
