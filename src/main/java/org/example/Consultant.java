@@ -15,7 +15,7 @@ public class Consultant {
     static final int appearY=75;
     private Circle model;
     public Consultant(){
-        movementSpeed=(int)(Math.random()*15)+2;
+        movementSpeed=(int)(Math.random()*25)+2;
         status="wait";
         model=new Circle();
         model.setCenterX(850+quantity*50);
@@ -58,21 +58,24 @@ public class Consultant {
        if (model.getCenterY() == Shelf.secondLine - 60) movmentXX(120);
    }
    public void toShelf(Shelf shelf){
-       if (model.getCenterY()!=Shelf.secondLine-60&& model.getCenterX()!=shelf.getModel().getX()+50) {
+       if (model.getCenterY()!=Shelf.secondLine-60&& model.getCenterX()!=shelf.getModel().getX()+70) {
            movmentYY(Shelf.secondLine - 60);
        }
-       if (model.getCenterY()==Shelf.secondLine-60) movmentXX((int)shelf.getModel().getX()+50);
-       if (model.getCenterX()==shelf.getModel().getX()+50) movmentYY((int)shelf.getModel().getY()+50);
-       if (model.getCenterX()==shelf.getModel().getX()+50 && model.getCenterY()==shelf.getModel().getY()+50) {
+       if (model.getCenterY()==Shelf.secondLine-60) movmentXX((int)shelf.getModel().getX()+70);
+       if (model.getCenterX()==shelf.getModel().getX()+70) movmentYY((int)shelf.getModel().getY()+50);
+       if (model.getCenterX()==shelf.getModel().getX()+70 && model.getCenterY()==shelf.getModel().getY()+50) {
            long start=System.currentTimeMillis();
            while (System.currentTimeMillis()-start<1000){}
            shelf.setNumberGoods(10);
            shelf.updateText();
+           shelf.setFilling(0);
            status = "place";
        }
    }
    public void place(int index){
-       if (model.getCenterY()==appearY && model.getCenterX()==850+index*50) status="wait";
+       if (model.getCenterY()==appearY && model.getCenterX()==850+index*50) {
+           status = "wait";
+       }
        if (model.getCenterX()==850+index*50) movmentYY(appearY);
        if (model.getCenterY()!=Shelf.secondLine-60&& model.getCenterX()!=850+index*50) {
            movmentYY(Shelf.secondLine - 60);

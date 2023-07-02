@@ -70,25 +70,6 @@ public class Modeling {
                     if (c.size()==0) timer.cancel();
             }
         }, 0, 2000);
-        timer.schedule(new TimerTask() {
-            @Override
-            public void  run(){
-                int i, j=0;
-                boolean work=false;
-                for (i=0;i!=numberShelf;i++) {
-                    if (s.get(i).getNumberGoods() == 0) {
-                        while (j != numberConsultant && work != true) {
-                            if (co.get(j).getStatus()=="wait") {
-                                co.get(j).setStatus("on stock");
-                                work = true;
-                            }
-                            j++;
-                        }
-                    }
-                    work=false;
-                }
-            }
-        },0, 500);
         for (i=0; i!=numberConsultant;i++) cicleConsultant(co.get(i));
         root.getChildren().add(canvas);
         wallPainting(root);
@@ -152,16 +133,21 @@ public class Modeling {
                             if (cu.getModel().getCenterY()==100){
                                 boolean fl=false;
                                 for (int i = 0; i != numberCashier; i++) {
-                                    if (ca.get(i).getQueueBuyers() < 7) fl = true;
+                                    if (ca.get(i).getQueueBuyers() < cu.getValidQueue()) fl = true;
                                 }
                                 if (fl==false){
                                     color=Color.RED;
                                     cu.setStatus("exit");
                                 }
-                                if (fl==true) cu.setStatus("to checkout");
+                                if (fl==true) cu.setStatus("product");
                             }
                             break;
                         }
+                        case "product": {
+                            cu.cycleProduct(s);
+                            if (cu.getStatus()=="exit") color=Color.RED;
+                        }
+                        break;
                         case "to checkout":{
                             int min_ch=ca.get(numberCashier-1).getQueueBuyers();
                             int num=numberCashier-1;
@@ -184,16 +170,15 @@ public class Modeling {
                             break;
                         }
                         case "exit":{
+                            if (color==Color.GREEN){
+                                if (cu.getModel().getCenterX()!=Customer.appearX && cu.getModel().getCenterX()!=ca.get(cu.getNumCheckout()).getModel().getCenterX()+30 && (cu.getModel().getCenterY()==Cashier.appearY+90)) cu.movmentXX((int)ca.get(cu.getNumCheckout()).getModel().getCenterX()+30);
+                            }
                                 cu.colorChange(color);
+                                if (cu.getModel().getCenterY()!=Customer.appearY && cu.getModel().getCenterX()!=Customer.appearX) cu.movmentYY(Shelf.secondLine-60);
+                                if (cu.getModel().getCenterY()==Shelf.secondLine-60 && cu.getModel().getCenterX()!=Customer.appearX) cu.movmentXX(Customer.appearX);
                                 if (cu.getModel().getCenterY()!=Customer.appearY && cu.getModel().getCenterX()==Customer.appearX) cu.movmentYY(Customer.appearY);
                                 if (cu.getModel().getCenterY()==Customer.appearY) {
                                     c.remove(cu);
-                                }
-                                if (color==Color.GREEN){
-                                    if (cu.getModel().getCenterX()!=Customer.appearX && cu.getModel().getCenterX()!=ca.get(cu.getNumCheckout()).getModel().getCenterX()+30 && (cu.getModel().getCenterY()==Cashier.appearY+90)) cu.movmentXX((int)ca.get(cu.getNumCheckout()).getModel().getCenterX()+30);
-                                    if (cu.getModel().getCenterX()==ca.get(cu.getNumCheckout()).getModel().getCenterX()+30 && cu.getModel().getCenterY()!=Shelf.secondLine-60) cu.movmentYY(Shelf.secondLine-60);
-                                    if (cu.getModel().getCenterY()==Shelf.secondLine-60 && cu.getModel().getCenterX()!=Customer.appearX) cu.movmentXX(Customer.appearX);
-
                                 }
                                 break;
                         }
@@ -219,13 +204,24 @@ public class Modeling {
                 @Override
                 public void  run(){
                     switch (c.getStatus()){
+                        case "wait": {
+                            int i=0;
+                            while (i!=numberShelf && c.getStatus()!="on stock"){
+                                if (s.get(i).getNumberGoods()==0 && s.get(i).getFilling()==0){
+                                    c.setStatus("on stock");
+                                    s.get(i).setFilling(co.indexOf(c)+1);
+                                }
+                                i++;
+                            }
+                            break;
+                        }
                         case "on stock":
                             c.onStock();
                             break;
                         case "to shelf": {
                             int i=0;
-                            while (s.get(i).getNumberGoods() != 0 && i!=numberShelf) i++;
-                            c.toShelf(s.get(i));
+                            while (i!=numberShelf && s.get(i).getFilling()!=(co.indexOf(c)+1)) i++;
+                            if (i!=numberShelf) c.toShelf(s.get(i));
                             break;
                         }
                         case "place":

@@ -8,22 +8,21 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 
 public class Shelf {
-    static String[] type=new String[]{"Хлеб","Молочные","Бакалея","Овощи","Фрукты"};
+    static String[] type=new String[]{"Хлеб","Молочные","Бакалея","Овощи","Фрукты", "Сладости","Напитки","Мясо"};
     private String typeShelf;
     private int numberGoods;
-    private ArrayList<Integer> price;
+    private int filling;
+    private int price;
     static int quantity;
     static final int firstLine=470;
     static final int secondLine=270;
     private Rectangle model;
     private Text text;
     public Shelf(){
-        if (quantity<5) typeShelf=type[quantity];
-        else typeShelf=type[(int)(Math.random()*4)];
-        //numberGoods=(int)(Math.random()*10);
-        numberGoods=0;
-        //for (int i=0;i!=numberGoods;i++)
-            //price.add((int)(Math.random()*19)+1);
+        filling=0;
+        typeShelf=type[quantity];
+        numberGoods=(int)(Math.random()*10);
+        price=((int)(Math.random()*19)+1);
         text = new Text (typeShelf+" "+numberGoods+"/10");
         text.setRotate(-90);
         text.setFont(Font.font(14));
@@ -46,6 +45,15 @@ public class Shelf {
         model.setStrokeWidth(2);
         model.setStroke(Color.BLACK);
         quantity++;
+    }
+    public int getFilling(){
+        return filling;
+    }
+    public void setFilling(int filling){
+        this.filling=filling;
+    }
+    public String getTypeShelf(){
+        return typeShelf;
     }
     public Rectangle getModel(){
         return  model;

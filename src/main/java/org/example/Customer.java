@@ -3,6 +3,7 @@ package org.example;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -22,13 +23,15 @@ public class Customer {
     private int validQueue;
     private Circle model;
     public Customer(){
+        needHelp=false;
+        validQueue=(int)(Math.random()*3)+3;
         status="entry";
         amountMoney=(int)(Math.random()*100)+10;
-        purchases=(int)(Math.random()*5+1);
+        purchases=0;
         movementSpeed=(int)(Math.random()*25)+2;
         int sizeProductList=(int)(Math.random()*5+1);
         productList= new ArrayList<String>();
-        for (int i=0;i!=sizeProductList;i++) productList.add(Shelf.type[(int)(Math.random()*5)]);
+        for (int i=0;i!=sizeProductList;i++) productList.add(Shelf.type[(int)(Math.random()*8)]);
         model=new Circle();
         model.setCenterX(appearX);
         model.setCenterY(appearY);
@@ -62,9 +65,8 @@ public class Customer {
         return amountMoney;
     }
     public void movementCheckout(Cashier c){
-        if (model.getCenterY()!=Shelf.firstLine-60 && model.getCenterY()!=Shelf.secondLine-60 && model.getCenterX()!=c.getModel().getCenterX()) {
-            if (Shelf.quantity < 5) movmentYY(Shelf.firstLine - 60);
-            if (Shelf.quantity >= 5) movmentYY(Shelf.secondLine - 60);
+        if (model.getCenterY()!=Shelf.secondLine-60 && model.getCenterX()!=c.getModel().getCenterX()) {
+            movmentYY(Shelf.secondLine - 60);
         }
         if (model.getCenterY()==Shelf.secondLine-60 && model.getCenterX()!=c.getModel().getCenterX()) movmentXX((int)c.getModel().getCenterX());
         if (model.getCenterX()==c.getModel().getCenterX()) {
@@ -76,6 +78,64 @@ public class Customer {
             status="queue";
         }
     }
+    public void cycleProduct(ArrayList<Shelf> shelf){
+        boolean fl=false;
+        if (productList.size()==0) {
+            if (purchases==0) status = "exit";
+            else status="to checkout";
+        }
+        else {
+            String product = productList.get(0);
+            int i=0;
+            while (i!=shelf.size() && !shelf.get(i).getTypeShelf().equals(product))i++;
+            if (i==shelf.size()) productList.remove(0);
+            else if (shelf.get(i).getTypeShelf().equals(product)) {
+                movementShelf(shelf.get(i), fl);
+                if (fl) {
+                    productList.remove(0);
+                    fl=false;
+                }
+            }
+            }
+
+    }
+    public void movementShelf(Shelf shelf, boolean fl){
+        if (model.getCenterX()!=shelf.getModel().getX()+70){
+            if (model.getCenterY()!=Shelf.secondLine-60) movmentYY(Shelf.secondLine-60);
+            if (model.getCenterY()==Shelf.secondLine-60) movmentXX((int)shelf.getModel().getX()+70);
+        }
+        if (model.getCenterX()==shelf.getModel().getX()+70) movmentYY((int)shelf.getModel().getY()+50);
+        if (model.getCenterX()==shelf.getModel().getX()+70 && model.getCenterY()==shelf.getModel().getY()+50){
+            if (shelf.getNumberGoods()==0){
+                    long start = System.currentTimeMillis();
+                    while (System.currentTimeMillis() - start < 500) {
+                    }
+                    if (shelf.getNumberGoods() == 0) fl = true;
+            }
+            if (shelf.getNumberGoods()>0){
+                int random=(int)(Math.random()*3);
+                if (random==0) {
+                    needHelp = true;
+                    long start = System.currentTimeMillis();
+                    while (System.currentTimeMillis() - start < 2000) {}
+                    if (needHelp==true) {
+                        productList.remove(0);
+                    }
+                }
+                if (needHelp==false) {
+                    long start = System.currentTimeMillis();
+                    while (System.currentTimeMillis() - start < 500) {
+                    }
+                    shelf.setNumberGoods(shelf.getNumberGoods() - 1);
+                    shelf.updateText();
+                    purchases = purchases + 1;
+                    productList.remove(0);
+                }
+                if (needHelp==true)
+                    needHelp=false;
+            }
+        }
+    }
     public void colorChange(Color color){
         model.setFill(color);
     }
@@ -85,6 +145,11 @@ public class Customer {
         gc.setFill(model.getFill()); // установка цвета заливки
         gc.strokeOval(model.getCenterX() - model.getRadius(), model.getCenterY() - model.getRadius(), model.getRadius() * 2, model.getRadius() * 2); // рисование круга на Canvas
         gc.fillOval(model.getCenterX() - model.getRadius(), model.getCenterY() - model.getRadius(), model.getRadius() * 2, model.getRadius() * 2);
+        if (status=="product" && productList.size()!=0) {
+            gc.setFill(Color.BLACK);
+            if (needHelp==false)gc.fillText(Character.toString(productList.get(0).charAt(0)), model.getCenterX()-4, model.getCenterY()+2);
+            else gc.fillText("?", model.getCenterX()-4, model.getCenterY()+2);
+        }
     }
     public int getMovementSpeed(){
         return movementSpeed;
