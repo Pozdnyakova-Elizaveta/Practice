@@ -41,6 +41,7 @@ public class Modeling {
         stage.setResizable(false);
     }
     public void change(){
+        Statistics statistics=new Statistics();
         Pane root = new Pane();
         Canvas canvas = new Canvas(1200, 700);
         GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -68,7 +69,15 @@ public class Modeling {
                     count++;
                 }
                 if (count==numberCustomer)
-                    if (c.size()==0) timer.cancel();
+                    if (c.size()==0) {
+                        Platform.runLater(() -> {
+                                    stage.hide();
+                                    int[] profit=new int [numberCashier];
+                                    for (int i=0; i!=numberCashier;i++) profit[i]=ca.get(i).getProfit();
+                                    statistics.display(profit);
+                                });
+                        timer.cancel();
+                    }
             }
         }, 0, 2000);
         for (i=0; i!=numberConsultant;i++) cicleConsultant(co.get(i));
@@ -89,8 +98,8 @@ public class Modeling {
                 time.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        canvasUpdate(gc);
                         if (c.size()==0) time.cancel();
+                        canvasUpdate(gc);
                     }
                 }, 0,10);
             }
@@ -143,6 +152,7 @@ public class Modeling {
                             if (fl==false){
                                 color=Color.RED;
                                 cu.setStatus("exit");
+                                Statistics.exitCustomer+=1;
                             }
                             if (fl==true) cu.setStatus("product");
                         }
@@ -198,6 +208,7 @@ public class Modeling {
                         }
                     }
                 }
+                if (c.size()==0) t.cancel();
             }
         },0, cu.getMovementSpeed());
     }

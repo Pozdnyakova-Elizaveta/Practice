@@ -95,7 +95,10 @@ public class Customer {
     public void cycleProduct(ArrayList<Shelf> shelf){
         boolean fl=false;
         if (productList.size()==0) {
-            if (purchases==0) status = "exit";
+            if (purchases==0) {
+                status = "exit";
+                Statistics.exitCustomer+=1;
+            }
             else status="to checkout";
         }
         else {
@@ -135,16 +138,22 @@ public class Customer {
                     }
                 }
                 if (needHelp==false && shelf.getNumberGoods()!=0) {
+                    //int min;
+                    //for (int i=0;i!=shelf.getNumberGoods();i++){
+
+                    //}
                     long start = System.currentTimeMillis();
                     while (System.currentTimeMillis() - start < 500) {
                     }
                     shelf.setNumberGoods(shelf.getNumberGoods() - 1);
                     shelf.updateText();
                     purchases = purchases + 1;
-                    productList.remove(0);
+                    if (productList.size()!=0) productList.remove(0);
                 }
-                if (needHelp==true)
-                    needHelp=false;
+                if (needHelp==true) {
+                    needHelp = false;
+                    Statistics.notWaitingCustomer+=1;
+                }
             }
         }
     }

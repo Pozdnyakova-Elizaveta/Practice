@@ -12,7 +12,7 @@ public class Shelf {
     private String typeShelf;
     private int numberGoods;
     private int filling;
-    private int price;
+    private ArrayList<Integer> price;
     static int quantity;
     static final int firstLine=470;
     static final int secondLine=270;
@@ -22,7 +22,10 @@ public class Shelf {
         filling=0;
         typeShelf=type[quantity];
         numberGoods=(int)(Math.random()*10);
-        price=((int)(Math.random()*19)+1);
+        price=new ArrayList<Integer>();
+        for (int i=0;i!=numberGoods;i++){
+            price.add((int)(Math.random()*30)+1);
+        }
         text = new Text (typeShelf+" "+numberGoods+"/10");
         text.setRotate(-90);
         text.setFont(Font.font(14));
@@ -45,6 +48,15 @@ public class Shelf {
         model.setStrokeWidth(2);
         model.setStroke(Color.BLACK);
         quantity++;
+    }
+    public ArrayList<Integer> getPrice(){
+        return price;
+    }
+    public void removePrice(int i){
+        price.remove(i);
+    }
+    public void setPrice(int n){
+        price.add(n);
     }
     public int getFilling(){
         return filling;

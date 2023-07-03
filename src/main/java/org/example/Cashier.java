@@ -34,6 +34,9 @@ public class Cashier {
     public void setQueueBuyers(int queueBuyers){
         this.queueBuyers=queueBuyers;
     }
+    public int getProfit(){
+        return profit;
+    }
     public void service(Customer customer){
         long start=System.currentTimeMillis();
         long time= customer.getPurchases()*serviceTime;
