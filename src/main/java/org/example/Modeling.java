@@ -1,5 +1,6 @@
 package org.example;
 
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -96,6 +97,10 @@ public class Modeling {
         };
         Thread thread = new Thread(runnable);
         thread.start();
+        stage.setOnCloseRequest(e -> {
+            Platform.exit(); // Закрытие Javafx
+            System.exit(0); // Завершение программы
+        });
     }
     public void wallPainting(Pane root){
         Line wallLeft=new Line(0.0,50.0,700.0,50.0);
@@ -116,120 +121,137 @@ public class Modeling {
     }
     public void canvasUpdate(GraphicsContext gc){
         int i;
-            gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
-            for (i = 0; i != co.size(); i++) co.get(i).updateConsultant(gc);
-            for (i = 0; i != c.size(); i++) c.get(i).updateCustomer(gc);
+        gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
+        for (i = 0; i != co.size(); i++) co.get(i).updateConsultant(gc);
+        for (i = 0; i != c.size(); i++) c.get(i).updateCustomer(gc);
     }
     public void cicleCustomer(Customer cu){
         Timer t=new Timer();
-            t.schedule(new TimerTask() {
-                Color color;
-                boolean dvih=false;
-                @Override
-                public void  run(){
-                    switch (cu.getStatus()){
-                        case "entry": {
-                            if (cu.getModel().getCenterY()!=100) cu.movmentYY(100);
-                            if (cu.getModel().getCenterY()==100){
-                                boolean fl=false;
-                                for (int i = 0; i != numberCashier; i++) {
-                                    if (ca.get(i).getQueueBuyers() < cu.getValidQueue()) fl = true;
-                                }
-                                if (fl==false){
-                                    color=Color.RED;
-                                    cu.setStatus("exit");
-                                }
-                                if (fl==true) cu.setStatus("product");
+        t.schedule(new TimerTask() {
+            Color color;
+            boolean dvih=false;
+            @Override
+            public void  run(){
+                switch (cu.getStatus()){
+                    case "entry": {
+                        if (cu.getModel().getCenterY()!=100) cu.movmentYY(100);
+                        if (cu.getModel().getCenterY()==100){
+                            boolean fl=false;
+                            for (int i = 0; i != numberCashier; i++) {
+                                if (ca.get(i).getQueueBuyers() < cu.getValidQueue()) fl = true;
                             }
-                            break;
-                        }
-                        case "product": {
-                            cu.cycleProduct(s);
-                            if (cu.getStatus()=="exit") color=Color.RED;
+                            if (fl==false){
+                                color=Color.RED;
+                                cu.setStatus("exit");
+                            }
+                            if (fl==true) cu.setStatus("product");
                         }
                         break;
-                        case "to checkout":{
-                            int min_ch=ca.get(numberCashier-1).getQueueBuyers();
-                            int num=numberCashier-1;
-                            for (int i = numberCashier-1; i >=0; i--) {
-                                if (ca.get(i).getQueueBuyers() < min_ch) {
-                                    num = i;
-                                    min_ch = ca.get(i).getQueueBuyers();
-                                }
-                            }
-                            cu.movementCheckout(ca.get(num));
-                            cu.setNumCheckout(num);
-                            break;
-                        }
-                        case "queue":{
-                            if (cu.getNumQueue()==0) {
-                                ca.get(cu.getNumCheckout()).service(cu);
-                                color = Color.GREEN;
-                                if (ca.get(cu.getNumCheckout()).getQueueBuyers()!=0) dvih=true;
-                            }
-                            break;
-                        }
-                        case "exit":{
-                            if (color==Color.GREEN){
-                                if (cu.getModel().getCenterX()!=Customer.appearX && cu.getModel().getCenterX()!=ca.get(cu.getNumCheckout()).getModel().getCenterX()+30 && (cu.getModel().getCenterY()==Cashier.appearY+90)) cu.movmentXX((int)ca.get(cu.getNumCheckout()).getModel().getCenterX()+30);
-                            }
-                                cu.colorChange(color);
-                                if (cu.getModel().getCenterY()!=Customer.appearY && cu.getModel().getCenterX()!=Customer.appearX) cu.movmentYY(Shelf.secondLine-60);
-                                if (cu.getModel().getCenterY()==Shelf.secondLine-60 && cu.getModel().getCenterX()!=Customer.appearX) cu.movmentXX(Customer.appearX);
-                                if (cu.getModel().getCenterY()!=Customer.appearY && cu.getModel().getCenterX()==Customer.appearX) cu.movmentYY(Customer.appearY);
-                                if (cu.getModel().getCenterY()==Customer.appearY) {
-                                    c.remove(cu);
-                                }
-                                break;
-                        }
                     }
-                    if (dvih){
-                        for (int i=0;i!=c.size();i++) {
-                            if (c.get(i).getStatus() == "queue" && c.get(i).getModel().getCenterX() == ca.get(cu.getNumCheckout()).getModel().getCenterX() && c.get(i).getModel().getCenterY() != Cashier.appearY + 90 + 35 * (c.get(i).getNumQueue() - 1))
-                               if (c.get(i).getModel().getCenterY() >= Cashier.appearY + 90) c.get(i).movmentYY(Cashier.appearY + 90 + 35 * (c.get(i).getNumQueue() - 1));
-                            if (c.get(i).getStatus() == "queue" && c.get(i).getModel().getCenterX() == ca.get(cu.getNumCheckout()).getModel().getCenterX() && c.get(i).getModel().getCenterY() == Cashier.appearY + 90 + 35 * (c.get(i).getNumQueue() - 1)) {
-                                c.get(i).setNumQueue(c.get(i).getNumQueue() - 1);
-                                if (c.get(i).getNumQueue()==0) dvih=false;
+                    case "product": {
+                        cu.cycleProduct(s);
+                        if (cu.getStatus()=="exit") color=Color.RED;
+                    }
+                    break;
+                    case "to checkout":{
+                        int min_ch=ca.get(numberCashier-1).getQueueBuyers();
+                        int num=numberCashier-1;
+                        for (int i = numberCashier-1; i >=0; i--) {
+                            if (ca.get(i).getQueueBuyers() < min_ch) {
+                                num = i;
+                                min_ch = ca.get(i).getQueueBuyers();
                             }
+                        }
+                        cu.movementCheckout(ca.get(num));
+                        cu.setNumCheckout(num);
+                        break;
+                    }
+                    case "queue":{
+                        if (cu.getNumQueue()==0) {
+                            ca.get(cu.getNumCheckout()).service(cu);
+                            color = Color.GREEN;
+                            if (ca.get(cu.getNumCheckout()).getQueueBuyers()!=0) dvih=true;
+                        }
+                        break;
+                    }
+                    case "exit":{
+                        if (color==Color.GREEN){
+                            if (cu.getModel().getCenterX()!=Customer.appearX && cu.getModel().getCenterX()!=ca.get(cu.getNumCheckout()).getModel().getCenterX()+30 && (cu.getModel().getCenterY()==Cashier.appearY+90)) cu.movmentXX((int)ca.get(cu.getNumCheckout()).getModel().getCenterX()+30);
+                        }
+                        cu.colorChange(color);
+                        if (cu.getModel().getCenterY()!=Customer.appearY && cu.getModel().getCenterX()!=Customer.appearX) cu.movmentYY(Shelf.secondLine-60);
+                        if (cu.getModel().getCenterY()==Shelf.secondLine-60 && cu.getModel().getCenterX()!=Customer.appearX) cu.movmentXX(Customer.appearX);
+                        if (cu.getModel().getCenterY()!=Customer.appearY && cu.getModel().getCenterX()==Customer.appearX) cu.movmentYY(Customer.appearY);
+                        if (cu.getModel().getCenterY()==Customer.appearY) {
+                            c.remove(cu);
+                        }
+                        break;
+                    }
+                }
+                if (dvih){
+                    for (int i=0;i!=c.size();i++) {
+                        if (c.get(i).getStatus() == "queue" && c.get(i).getModel().getCenterX() == ca.get(cu.getNumCheckout()).getModel().getCenterX() && c.get(i).getModel().getCenterY() != Cashier.appearY + 90 + 35 * (c.get(i).getNumQueue() - 1))
+                            if (c.get(i).getModel().getCenterY() >= Cashier.appearY + 90) c.get(i).movmentYY(Cashier.appearY + 90 + 35 * (c.get(i).getNumQueue() - 1));
+                        if (c.get(i).getStatus() == "queue" && c.get(i).getModel().getCenterX() == ca.get(cu.getNumCheckout()).getModel().getCenterX() && c.get(i).getModel().getCenterY() == Cashier.appearY + 90 + 35 * (c.get(i).getNumQueue() - 1)) {
+                            c.get(i).setNumQueue(c.get(i).getNumQueue() - 1);
+                            if (c.get(i).getNumQueue()==0) dvih=false;
                         }
                     }
                 }
-            },0, cu.getMovementSpeed());
-        }
-    public void cicleConsultant(Consultant c){
+            }
+        },0, cu.getMovementSpeed());
+    }
+    public void cicleConsultant(Consultant con){
         Timer t=new Timer();
         int i;
         for (i=0;i!=numberConsultant;i++) {
             t.schedule(new TimerTask() {
                 @Override
                 public void  run(){
-                    switch (c.getStatus()){
+                    switch (con.getStatus()){
                         case "wait": {
                             int i=0;
-                            while (i!=numberShelf && c.getStatus()!="on stock"){
+                            while (i!=numberShelf && con.getStatus()!="on stock"){
                                 if (s.get(i).getNumberGoods()==0 && s.get(i).getFilling()==0){
-                                    c.setStatus("on stock");
-                                    s.get(i).setFilling(co.indexOf(c)+1);
+                                    con.setStatus("on stock");
+                                    s.get(i).setFilling(co.indexOf(con)+1);
+                                }
+                                i++;
+                            }
+                            i=0;
+                            while (i!=c.size() && (con.getStatus()!="on stock" || con.getStatus()!="help")) {
+                                if (c.get(i).getNeedHelp()==true && c.get(i).getFilling()==0){
+                                    con.setStatus("help");
+                                    c.get(i).setFilling(co.indexOf(con)+1);
                                 }
                                 i++;
                             }
                             break;
                         }
                         case "on stock":
-                            c.onStock();
+                            con.onStock();
                             break;
+                        case "help":{
+                            int i=0;
+                            while (i!=c.size() && c.get(i).getFilling()!=(co.indexOf(con)+1)) i++;
+                            if (i!=c.size()) {
+                                con.help(c.get(i));
+                                if (c.get(i).getNeedHelp()==false) con.setStatus("place");
+                            }
+                            break;
+                        }
                         case "to shelf": {
                             int i=0;
-                            while (i!=numberShelf && s.get(i).getFilling()!=(co.indexOf(c)+1)) i++;
-                            if (i!=numberShelf) c.toShelf(s.get(i));
+                            while (i!=numberShelf && s.get(i).getFilling()!=(co.indexOf(con)+1)) i++;
+                            if (i!=numberShelf) con.toShelf(s.get(i));
                             break;
                         }
                         case "place":
-                            c.place(co.indexOf(c));
+                            con.place(co.indexOf(con));
                             break;
                     }
                 }
-            },0, c.getMovementSpeed());
+            },0, con.getMovementSpeed());
         }
 
     }

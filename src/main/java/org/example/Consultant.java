@@ -72,6 +72,20 @@ public class Consultant {
            status = "place";
        }
    }
+   public void help(Customer c){
+       if (model.getCenterY()!=Shelf.secondLine-60&& model.getCenterX()!=c.getModel().getCenterX()) {
+           movmentYY(Shelf.secondLine - 60);
+       }
+       if (model.getCenterY()==Shelf.secondLine-60) movmentXX((int)c.getModel().getCenterX());
+       if (model.getCenterX()==c.getModel().getCenterX()) movmentYY((int)c.getModel().getCenterY()-30);
+       if (model.getCenterX()==c.getModel().getCenterX() && model.getCenterY()==c.getModel().getCenterY()-30){
+           long start=System.currentTimeMillis();
+           while (System.currentTimeMillis()-start<1000){}
+           c.setNeedHelp(false);
+           c.setFilling(0);
+           status="place";
+       }
+   }
    public void place(int index){
        if (model.getCenterY()==appearY && model.getCenterX()==850+index*50) {
            status = "wait";

@@ -17,12 +17,14 @@ public class Customer {
     private boolean needHelp;
     private int numCheckout;
     private int numQueue;
+    private int filling;
     private int purchases;
     private ArrayList<String> productList;
     private String status;
     private int validQueue;
     private Circle model;
     public Customer(){
+        filling=0;
         needHelp=false;
         validQueue=(int)(Math.random()*3)+3;
         status="entry";
@@ -42,6 +44,18 @@ public class Customer {
     }
     public Circle getModel(){
         return  model;
+    }
+    public boolean getNeedHelp(){
+        return needHelp;
+    }
+    public int getFilling(){
+        return filling;
+    }
+    public void setFilling(int filling){
+        this.filling=filling;
+    }
+    public void setNeedHelp(boolean needHelp){
+        this.needHelp=needHelp;
     }
     public int getValidQueue(){
         return validQueue;
@@ -93,7 +107,6 @@ public class Customer {
                 movementShelf(shelf.get(i), fl);
                 if (fl) {
                     productList.remove(0);
-                    fl=false;
                 }
             }
             }
@@ -108,8 +121,7 @@ public class Customer {
         if (model.getCenterX()==shelf.getModel().getX()+70 && model.getCenterY()==shelf.getModel().getY()+50){
             if (shelf.getNumberGoods()==0){
                     long start = System.currentTimeMillis();
-                    while (System.currentTimeMillis() - start < 500) {
-                    }
+                    while (System.currentTimeMillis() - start < 2000) {}
                     if (shelf.getNumberGoods() == 0) fl = true;
             }
             if (shelf.getNumberGoods()>0){
@@ -117,12 +129,12 @@ public class Customer {
                 if (random==0) {
                     needHelp = true;
                     long start = System.currentTimeMillis();
-                    while (System.currentTimeMillis() - start < 2000) {}
+                    while (System.currentTimeMillis() - start < 5000) {}
                     if (needHelp==true) {
                         productList.remove(0);
                     }
                 }
-                if (needHelp==false) {
+                if (needHelp==false && shelf.getNumberGoods()!=0) {
                     long start = System.currentTimeMillis();
                     while (System.currentTimeMillis() - start < 500) {
                     }

@@ -1,6 +1,7 @@
 package org.example;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
@@ -78,6 +79,10 @@ public class Main extends Application {
         stage.setTitle("Практика");
         stage.setWidth(1200);
         stage.setHeight(700);
+        stage.setOnCloseRequest(e -> {
+            Platform.exit(); // Закрытие Javafx
+            System.exit(0); // Завершение программы
+        });
         start.setOnAction(e -> {
             stage.hide();
             Modeling modeling=new Modeling(choiceBoxCashier.getValue(),(int)choiceCustomer.getValue(),choiceBoxShelf.getValue(),choiceBoxConsultant.getValue());
