@@ -15,7 +15,7 @@ public class Cashier {
     private Circle model;
     public Cashier(){
         queueBuyers=0;
-        serviceTime=(int)(Math.random()*500)+400;
+        serviceTime=(int)(Math.random()*1000)+2000;
         model=new Circle();
         model.setCenterX(100+quantity*100);
         model.setCenterY(appearY);
@@ -42,7 +42,7 @@ public class Cashier {
         long time= customer.getPurchases()*serviceTime;
         while(System.currentTimeMillis()-start<time){}
         queueBuyers= queueBuyers-1;
-        profit=profit+customer.getAmountMoney();
+        profit=profit+customer.getTotalSpend();
         customer.setStatus("exit");
     }
 }

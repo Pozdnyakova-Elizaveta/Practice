@@ -24,7 +24,7 @@ public class Shelf {
         numberGoods=(int)(Math.random()*10);
         price=new ArrayList<Integer>();
         for (int i=0;i!=numberGoods;i++){
-            price.add((int)(Math.random()*30)+1);
+            price.add((int)(Math.random()*71)+30);
         }
         text = new Text (typeShelf+" "+numberGoods+"/10");
         text.setRotate(-90);
@@ -49,11 +49,14 @@ public class Shelf {
         model.setStroke(Color.BLACK);
         quantity++;
     }
-    public ArrayList<Integer> getPrice(){
-        return price;
+    public int getPrice(int i){
+        return price.get(i);
     }
     public void removePrice(int i){
         price.remove(i);
+    }
+    public int getSizePrice(){
+        return price.size();
     }
     public void setPrice(int n){
         price.add(n);

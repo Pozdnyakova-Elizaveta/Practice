@@ -67,6 +67,9 @@ public class Consultant {
            long start=System.currentTimeMillis();
            while (System.currentTimeMillis()-start<1000){}
            shelf.setNumberGoods(10);
+           for (int i=0;i!=shelf.getNumberGoods();i++){
+               shelf.setPrice((int)(Math.random()*71)+30);
+           }
            shelf.updateText();
            shelf.setFilling(0);
            status = "place";

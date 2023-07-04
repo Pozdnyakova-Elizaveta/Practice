@@ -1,7 +1,9 @@
 package org.example;
 
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -37,13 +39,13 @@ public class Statistics {
                 highPriceCustomer+"\n"+"Работа касс:");
         Text cashier=new Text();
         for (int i=0; i!=Modeling.numberCashier;i++){
-            cashier.setText(cashier.getText()+"Касса "+(i+1)+": "+ profit[i]+"\n");
+            cashier.setText(cashier.getText()+"Касса "+(i+1)+": "+ profit[i]+" руб\n");
         }
         cashier.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
-        cashier.setLayoutY(180);
+        cashier.setLayoutY(350);
         cashier.setLayoutX(60);
         inf.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
-        inf.setLayoutY(150);
+        inf.setLayoutY(220);
         inf.setLayoutX(60);
         Pane root = new Pane();
         Scene scene = new Scene(root);

@@ -14,6 +14,7 @@ public class Customer {
     static final int appearY=25;
     private int movementSpeed;
     private int amountMoney;
+    private int totalSpend;
     private boolean needHelp;
     private int numCheckout;
     private int numQueue;
@@ -24,11 +25,12 @@ public class Customer {
     private int validQueue;
     private Circle model;
     public Customer(){
+        totalSpend=0;
         filling=0;
         needHelp=false;
         validQueue=(int)(Math.random()*3)+3;
         status="entry";
-        amountMoney=(int)(Math.random()*100)+10;
+        amountMoney=(int)(Math.random()*200)+50;
         purchases=0;
         movementSpeed=(int)(Math.random()*25)+2;
         int sizeProductList=(int)(Math.random()*5+1);
@@ -78,6 +80,9 @@ public class Customer {
     public int getAmountMoney(){
         return amountMoney;
     }
+    public int getTotalSpend(){
+        return totalSpend;
+    }
     public void movementCheckout(Cashier c){
         if (model.getCenterY()!=Shelf.secondLine-60 && model.getCenterX()!=c.getModel().getCenterX()) {
             movmentYY(Shelf.secondLine - 60);
@@ -105,17 +110,20 @@ public class Customer {
             String product = productList.get(0);
             int i=0;
             while (i!=shelf.size() && !shelf.get(i).getTypeShelf().equals(product))i++;
-            if (i==shelf.size()) productList.remove(0);
-            else if (shelf.get(i).getTypeShelf().equals(product)) {
-                movementShelf(shelf.get(i), fl);
-                if (fl) {
-                    productList.remove(0);
-                }
+            if (i!=shelf.size() && shelf.get(i).getTypeShelf().equals(product)) {
+                movementShelf(shelf.get(i));
+            }
+            if (i==shelf.size()){
+                colorChange(Color.CHOCOLATE);
+                long start = System.currentTimeMillis();
+                while (System.currentTimeMillis() - start < 1000) {}
+                colorChange(Color.WHITE);
+                productList.remove(0);
             }
             }
 
     }
-    public void movementShelf(Shelf shelf, boolean fl){
+    public void movementShelf(Shelf shelf){
         if (model.getCenterX()!=shelf.getModel().getX()+70){
             if (model.getCenterY()!=Shelf.secondLine-60) movmentYY(Shelf.secondLine-60);
             if (model.getCenterY()==Shelf.secondLine-60) movmentXX((int)shelf.getModel().getX()+70);
@@ -124,8 +132,10 @@ public class Customer {
         if (model.getCenterX()==shelf.getModel().getX()+70 && model.getCenterY()==shelf.getModel().getY()+50){
             if (shelf.getNumberGoods()==0){
                     long start = System.currentTimeMillis();
-                    while (System.currentTimeMillis() - start < 2000) {}
-                    if (shelf.getNumberGoods() == 0) fl = true;
+                    colorChange(Color.INDIGO);
+                    while (System.currentTimeMillis() - start < 4000) {}
+                    if (shelf.getNumberGoods() == 0) productList.remove(0);
+                    colorChange(Color.WHITE);
             }
             if (shelf.getNumberGoods()>0){
                 int random=(int)(Math.random()*3);
@@ -135,20 +145,41 @@ public class Customer {
                     while (System.currentTimeMillis() - start < 5000) {}
                     if (needHelp==true) {
                         productList.remove(0);
+                        start = System.currentTimeMillis();
+                        while (System.currentTimeMillis() - start < 100) {}
                     }
                 }
-                if (needHelp==false && shelf.getNumberGoods()!=0) {
-                    //int min;
-                    //for (int i=0;i!=shelf.getNumberGoods();i++){
+                if (needHelp==false && shelf.getNumberGoods()!=0 && shelf.getSizePrice()!=0) {
+                    int min=shelf.getPrice(0);
+                    int ind=0;
+                    for (int i=0;i!=shelf.getSizePrice();i++){
+                        if (shelf.getPrice(i)<min) {
+                            min = shelf.getPrice(i);
+                            ind=i;
+                        }
 
-                    //}
-                    long start = System.currentTimeMillis();
-                    while (System.currentTimeMillis() - start < 500) {
                     }
-                    shelf.setNumberGoods(shelf.getNumberGoods() - 1);
-                    shelf.updateText();
-                    purchases = purchases + 1;
-                    if (productList.size()!=0) productList.remove(0);
+                    if (min<amountMoney) {
+                        long start = System.currentTimeMillis();
+                        while (System.currentTimeMillis() - start < 500) {
+                        }
+                        shelf.setNumberGoods(shelf.getNumberGoods() - 1);
+                        totalSpend=totalSpend+min;
+                        amountMoney=amountMoney-min;
+                        shelf.updateText();
+                        purchases = purchases + 1;
+                        shelf.removePrice(ind);
+                        if (productList.size() != 0) productList.remove(0);
+                    }
+                    else {
+                        colorChange(Color.YELLOW);
+                        Statistics.highPriceCustomer+=1;
+                        long start = System.currentTimeMillis();
+                        while (System.currentTimeMillis() - start < 500) {
+                        }
+                        if (productList.size() != 0) productList.remove(0);
+                        colorChange(Color.WHITE);
+                    }
                 }
                 if (needHelp==true) {
                     needHelp = false;

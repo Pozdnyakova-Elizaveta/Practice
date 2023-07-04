@@ -59,7 +59,7 @@ public class Main extends Application {
             label.setText(String.valueOf(newValue.intValue()));
         });
         ObservableList<Integer> choiceConsultant = FXCollections.observableArrayList(0,1,2,3,4,5,6);
-        ObservableList<Integer> choiceCashier = FXCollections.observableArrayList(1,2,3,4,5,6);
+        ObservableList<Integer> choiceCashier = FXCollections.observableArrayList(1,2,3);
         ObservableList<Integer> choiceShelf = FXCollections.observableArrayList(1,2,3,4,5,6,7,8);
         ChoiceBox<Integer> choiceBoxConsultant = new ChoiceBox<Integer>(choiceConsultant);
         choiceBoxConsultant.setLayoutX(800);

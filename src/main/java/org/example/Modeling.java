@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -79,7 +80,7 @@ public class Modeling {
                         timer.cancel();
                     }
             }
-        }, 0, 2000);
+        }, 0, 3000);
         for (i=0; i!=numberConsultant;i++) cicleConsultant(co.get(i));
         root.getChildren().add(canvas);
         wallPainting(root);
@@ -101,7 +102,7 @@ public class Modeling {
                         if (c.size()==0) time.cancel();
                         canvasUpdate(gc);
                     }
-                }, 0,10);
+                }, 0,30);
             }
         };
         Thread thread = new Thread(runnable);
@@ -160,7 +161,7 @@ public class Modeling {
                     }
                     case "product": {
                         cu.cycleProduct(s);
-                        if (cu.getStatus()=="exit") color=Color.RED;
+                        if (cu.getStatus()=="exit") color=Color.BLUE;
                     }
                     break;
                     case "to checkout":{
@@ -247,7 +248,7 @@ public class Modeling {
                             while (i!=c.size() && c.get(i).getFilling()!=(co.indexOf(con)+1)) i++;
                             if (i!=c.size()) {
                                 con.help(c.get(i));
-                                if (c.get(i).getNeedHelp()==false) con.setStatus("place");
+                                if (i!=c.size() && c.get(i).getNeedHelp()==false) con.setStatus("place");
                             }
                             break;
                         }
@@ -258,7 +259,23 @@ public class Modeling {
                             break;
                         }
                         case "place":
-                            con.place(co.indexOf(con));
+                            int i=0;
+                            while (i!=numberShelf && con.getStatus()!="on stock"){
+                                if (s.get(i).getNumberGoods()==0 && s.get(i).getFilling()==0){
+                                    con.setStatus("on stock");
+                                    s.get(i).setFilling(co.indexOf(con)+1);
+                                }
+                                i++;
+                            }
+                            i=0;
+                            while (i!=c.size() && (con.getStatus()!="on stock" || con.getStatus()!="help")) {
+                                if (c.get(i).getNeedHelp()==true && c.get(i).getFilling()==0){
+                                    con.setStatus("help");
+                                    c.get(i).setFilling(co.indexOf(con)+1);
+                                }
+                                i++;
+                            }
+                            if (con.getStatus()=="place")con.place(co.indexOf(con));
                             break;
                     }
                 }
