@@ -46,7 +46,7 @@ public class Main extends Application {
         title.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
         Button start = new Button("Запуск");
         start.setLayoutX(500);
-        start.setLayoutY(500);
+        start.setLayoutY(560);
         start.setPrefSize(200,50);
         Slider choiceCustomer=new Slider(1.0,100.0,5.0);
         choiceCustomer.setLayoutX(800);
@@ -73,7 +73,11 @@ public class Main extends Application {
         choiceBoxShelf.setLayoutX(800);
         choiceBoxShelf.setLayoutY(220);
         choiceBoxShelf.setValue(1);
-        Group group = new Group(title, numberCustomer, numberCashier, numberConsultant, numberShelf, start, choiceBoxCashier, choiceBoxConsultant,choiceBoxShelf,choiceCustomer,label);
+        Text info=new Text("Реакции покупателей:\n1.Красный - покупатель ушел из-за длинных очередей\n2.Синий - покупатель ушел, т.к. не было нужных товаров/не помог консультант\n3.Зеленый - покупатель ушел с покупками\n4.Оранжевый - необходимого товара нет в магазине\n5.Фиолетовый - необходимого товара нет на полке\n6.Желтый - покупателю не хватает денег на товар");
+        info.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
+        info.setLayoutX(200);
+        info.setLayoutY(340);
+        Group group = new Group(title, numberCustomer, numberCashier, numberConsultant, numberShelf, start, choiceBoxCashier, choiceBoxConsultant,choiceBoxShelf,choiceCustomer,label, info);
         Scene scene = new Scene(group);
         stage.setScene(scene);
         stage.setTitle("Практика");

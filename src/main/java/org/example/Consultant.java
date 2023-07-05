@@ -15,7 +15,7 @@ public class Consultant {
     static final int appearY=75;
     private Circle model;
     public Consultant(){
-        movementSpeed=(int)(Math.random()*25)+2;
+        movementSpeed=(int)(Math.random()*10)+1;
         status="wait";
         model=new Circle();
         model.setCenterX(850+quantity*50);
@@ -51,9 +51,8 @@ public class Consultant {
             movmentYY(550);
         }
         if (model.getCenterX()==120 && model.getCenterY()==550) status="to shelf";
-        if (model.getCenterY()!=Shelf.firstLine-60 && model.getCenterY()!=Shelf.secondLine-60 && model.getCenterX()!=120) {
-           if (Shelf.quantity < 5) movmentYY(Shelf.firstLine - 60);
-           if (Shelf.quantity >= 5) movmentYY(Shelf.secondLine - 60);
+        if (model.getCenterY()!=Shelf.secondLine-60 && model.getCenterX()!=120) {
+            movmentYY(Shelf.secondLine - 60);
        }
        if (model.getCenterY() == Shelf.secondLine - 60) movmentXX(120);
    }

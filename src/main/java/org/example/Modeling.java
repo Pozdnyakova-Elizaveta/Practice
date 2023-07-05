@@ -216,28 +216,12 @@ public class Modeling {
     public void cicleConsultant(Consultant con){
         Timer t=new Timer();
         int i;
-        for (i=0;i!=numberConsultant;i++) {
             t.schedule(new TimerTask() {
                 @Override
                 public void  run(){
+                    search(con);
                     switch (con.getStatus()){
                         case "wait": {
-                            int i=0;
-                            while (i!=numberShelf && con.getStatus()!="on stock"){
-                                if (s.get(i).getNumberGoods()==0 && s.get(i).getFilling()==0){
-                                    con.setStatus("on stock");
-                                    s.get(i).setFilling(co.indexOf(con)+1);
-                                }
-                                i++;
-                            }
-                            i=0;
-                            while (i!=c.size() && (con.getStatus()!="on stock" || con.getStatus()!="help")) {
-                                if (c.get(i).getNeedHelp()==true && c.get(i).getFilling()==0){
-                                    con.setStatus("help");
-                                    c.get(i).setFilling(co.indexOf(con)+1);
-                                }
-                                i++;
-                            }
                             break;
                         }
                         case "on stock":
@@ -248,40 +232,50 @@ public class Modeling {
                             while (i!=c.size() && c.get(i).getFilling()!=(co.indexOf(con)+1)) i++;
                             if (i!=c.size()) {
                                 con.help(c.get(i));
-                                if (i!=c.size() && c.get(i).getNeedHelp()==false) con.setStatus("place");
+                                if (c.get(i).getNeedHelp()==false) {
+                                    c.get(i).setFilling(0);
+                                    con.setStatus("place");
+                                }
                             }
+                            else con.setStatus("place");
                             break;
                         }
                         case "to shelf": {
                             int i=0;
                             while (i!=numberShelf && s.get(i).getFilling()!=(co.indexOf(con)+1)) i++;
                             if (i!=numberShelf) con.toShelf(s.get(i));
+                            if (i==numberShelf || s.get(i).getNumberGoods()!=0){
+                                if (i!=numberShelf && s.get(i).getNumberGoods()!=0) s.get(i).setFilling(0);
+                                con.setStatus("place");
+                            }
                             break;
                         }
-                        case "place":
-                            int i=0;
-                            while (i!=numberShelf && con.getStatus()!="on stock"){
-                                if (s.get(i).getNumberGoods()==0 && s.get(i).getFilling()==0){
-                                    con.setStatus("on stock");
-                                    s.get(i).setFilling(co.indexOf(con)+1);
-                                }
-                                i++;
-                            }
-                            i=0;
-                            while (i!=c.size() && (con.getStatus()!="on stock" || con.getStatus()!="help")) {
-                                if (c.get(i).getNeedHelp()==true && c.get(i).getFilling()==0){
-                                    con.setStatus("help");
-                                    c.get(i).setFilling(co.indexOf(con)+1);
-                                }
-                                i++;
-                            }
-                            if (con.getStatus()=="place")con.place(co.indexOf(con));
+                        case "place": {
+                            con.place(co.indexOf(con));
                             break;
+                        }
                     }
                 }
             },0, con.getMovementSpeed());
-        }
 
+    }
+    public void search(Consultant con){
+        int i=0;
+        while (i!=numberShelf && (con.getStatus()=="wait" || con.getStatus()=="place")){
+            if (s.get(i).getNumberGoods()==0 && s.get(i).getFilling()==0){
+                con.setStatus("on stock");
+                s.get(i).setFilling(co.indexOf(con)+1);
+            }
+            i++;
+        }
+        i=0;
+        while (i!=c.size() && (con.getStatus()=="wait" || con.getStatus()=="place")) {
+            if (c.get(i).getNeedHelp()==true && c.get(i).getFilling()==0){
+                con.setStatus("help");
+                c.get(i).setFilling(co.indexOf(con)+1);
+            }
+            i++;
+        }
     }
 
 }

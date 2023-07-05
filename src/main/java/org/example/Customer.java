@@ -111,7 +111,7 @@ public class Customer {
             int i=0;
             while (i!=shelf.size() && !shelf.get(i).getTypeShelf().equals(product))i++;
             if (i!=shelf.size() && shelf.get(i).getTypeShelf().equals(product)) {
-                movementShelf(shelf.get(i));
+                movementShelf(shelf.get(i), fl);
             }
             if (i==shelf.size()){
                 colorChange(Color.CHOCOLATE);
@@ -123,7 +123,7 @@ public class Customer {
             }
 
     }
-    public void movementShelf(Shelf shelf){
+    public void movementShelf(Shelf shelf,boolean fl){
         if (model.getCenterX()!=shelf.getModel().getX()+70){
             if (model.getCenterY()!=Shelf.secondLine-60) movmentYY(Shelf.secondLine-60);
             if (model.getCenterY()==Shelf.secondLine-60) movmentXX((int)shelf.getModel().getX()+70);
@@ -168,7 +168,7 @@ public class Customer {
                         amountMoney=amountMoney-min;
                         shelf.updateText();
                         purchases = purchases + 1;
-                        shelf.removePrice(ind);
+                        if (shelf.getSizePrice()!=0 && shelf.getSizePrice()!=ind) shelf.removePrice(ind);
                         if (productList.size() != 0) productList.remove(0);
                     }
                     else {
@@ -183,6 +183,7 @@ public class Customer {
                 }
                 if (needHelp==true) {
                     needHelp = false;
+                    filling=0;
                     Statistics.notWaitingCustomer+=1;
                 }
             }
