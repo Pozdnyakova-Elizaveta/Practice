@@ -90,10 +90,10 @@ public class Customer {
         return totalSpend;
     }
     public void movementCheckout(Cashier c){
-        if (model.getCenterY()!=Shelf.secondLine-60 && model.getCenterX()!=c.getModel().getCenterX()) {
-            movmentYY(Shelf.secondLine - 60);
+        if (model.getCenterY()!=Shelf.secondLine-40 && model.getCenterX()!=c.getModel().getCenterX()) {
+            movmentYY(Shelf.secondLine - 40);
         }
-        if (model.getCenterY()==Shelf.secondLine-60 && model.getCenterX()!=c.getModel().getCenterX()) movmentXX((int)c.getModel().getCenterX());
+        if (model.getCenterY()==Shelf.secondLine-40 && model.getCenterX()!=c.getModel().getCenterX()) movmentXX((int)c.getModel().getCenterX());
         if (model.getCenterX()==c.getModel().getCenterX()) {
             movmentYY((int)c.getModel().getCenterY()+90+35*(c.getQueueBuyers()));
         }
@@ -131,17 +131,18 @@ public class Customer {
     }
     public void movementShelf(Shelf shelf,boolean fl){
         if (model.getCenterX()!=shelf.getModel().getX()+70){
-            if (model.getCenterY()!=Shelf.secondLine-60) movmentYY(Shelf.secondLine-60);
-            if (model.getCenterY()==Shelf.secondLine-60) movmentXX((int)shelf.getModel().getX()+70);
+            if (model.getCenterY()!=Shelf.secondLine-120 && model.getCenterX()<=shelf.getModel().getX()) movmentYY(Shelf.secondLine-120);
+            if (model.getCenterY()!=Shelf.secondLine-60 && model.getCenterX()>shelf.getModel().getX()) movmentYY(Shelf.secondLine-60);
+            if ((model.getCenterY()==Shelf.secondLine-120 && model.getCenterX()<=shelf.getModel().getX() ) || (model.getCenterY()==Shelf.secondLine-60 && model.getCenterX()>shelf.getModel().getX())) movmentXX((int)shelf.getModel().getX()+70);
         }
-        if (model.getCenterX()==shelf.getModel().getX()+70) movmentYY((int)shelf.getModel().getY()+50);
-        if (model.getCenterX()==shelf.getModel().getX()+70 && model.getCenterY()==shelf.getModel().getY()+50){
+        if (model.getCenterX()==shelf.getModel().getX()+70) movmentYY((int)shelf.getModel().getY()+movementSpeed*5);
+        if (model.getCenterX()==shelf.getModel().getX()+70 && model.getCenterY()==shelf.getModel().getY()+movementSpeed*5){
             if (shelf.getNumberGoods()==0){
-                    long start = System.currentTimeMillis();
-                    colorChange(Color.INDIGO);
-                    while (System.currentTimeMillis() - start < 4000) {}
-                    if (shelf.getNumberGoods() == 0) productList.remove(0);
-                    colorChange(Color.WHITE);
+                long start = System.currentTimeMillis();
+                colorChange(Color.INDIGO);
+                while (System.currentTimeMillis() - start < 4000) {}
+                if (shelf.getNumberGoods() == 0) productList.remove(0);
+                colorChange(Color.WHITE);
             }
             if (shelf.getNumberGoods()>0){
                 int random=(int)(Math.random()*3);
@@ -234,6 +235,18 @@ public class Customer {
         if (x > model.getCenterX()) {
             model.setCenterX(model.getCenterX() + 1);
         }
+    }
+    public boolean provGor(){
+        boolean fl=false;
+        int dx;
+        int i;
+        for (i=0;i!=Modeling.c.size();i++){
+            if (Modeling.c.indexOf(this)!=i) {
+                dx = Math.abs((int) (this.model.getCenterX() - Modeling.c.get(i).getModel().getCenterX()));
+                if (dx<=30) fl = true;
+            }
+        }
+        return fl;
     }
 
 }

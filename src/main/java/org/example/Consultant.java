@@ -50,19 +50,23 @@ public class Consultant {
         if (model.getCenterX()==120){
             movmentYY(550);
         }
-        if (model.getCenterX()==120 && model.getCenterY()==550) status="to shelf";
-        if (model.getCenterY()!=Shelf.secondLine-60 && model.getCenterX()!=120) {
-            movmentYY(Shelf.secondLine - 60);
+        if (model.getCenterX()==120 && model.getCenterY()==550) {
+            long start=System.currentTimeMillis();
+            while (System.currentTimeMillis()-start<1000){}
+            status = "to shelf";
+        }
+        if (model.getCenterY()!=Shelf.secondLine-30 && model.getCenterX()!=120) {
+            movmentYY(Shelf.secondLine - 30);
        }
-       if (model.getCenterY() == Shelf.secondLine - 60) movmentXX(120);
+       if (model.getCenterY() == Shelf.secondLine - 30) movmentXX(120);
    }
    public void toShelf(Shelf shelf){
-       if (model.getCenterY()!=Shelf.secondLine-60&& model.getCenterX()!=shelf.getModel().getX()+70) {
-           movmentYY(Shelf.secondLine - 60);
+       if (model.getCenterY()!=Shelf.firstLine-30 && model.getCenterX()!=shelf.getModel().getX()+70) {
+           movmentYY(Shelf.firstLine-30);
        }
-       if (model.getCenterY()==Shelf.secondLine-60) movmentXX((int)shelf.getModel().getX()+70);
-       if (model.getCenterX()==shelf.getModel().getX()+70) movmentYY((int)shelf.getModel().getY()+50);
-       if (model.getCenterX()==shelf.getModel().getX()+70 && model.getCenterY()==shelf.getModel().getY()+50) {
+       if (model.getCenterY()==Shelf.firstLine-30) movmentXX((int)shelf.getModel().getX()+70);
+       if (model.getCenterX()==shelf.getModel().getX()+70) movmentYY((int)shelf.getModel().getY()+80);
+       if (model.getCenterX()==shelf.getModel().getX()+70 && model.getCenterY()==shelf.getModel().getY()+80) {
            long start=System.currentTimeMillis();
            while (System.currentTimeMillis()-start<1000){}
            shelf.setNumberGoods(10);
@@ -75,12 +79,12 @@ public class Consultant {
        }
    }
    public void help(Customer c){
-       if (model.getCenterY()!=Shelf.secondLine-60&& model.getCenterX()!=c.getModel().getCenterX()) {
-           movmentYY(Shelf.secondLine - 60);
+       if (model.getCenterY()!=Shelf.secondLine-30&& model.getCenterX()!=c.getModel().getCenterX()+40) {
+           movmentYY(Shelf.secondLine - 30);
        }
-       if (model.getCenterY()==Shelf.secondLine-60) movmentXX((int)c.getModel().getCenterX());
-       if (model.getCenterX()==c.getModel().getCenterX()) movmentYY((int)c.getModel().getCenterY()-30);
-       if (model.getCenterX()==c.getModel().getCenterX() && model.getCenterY()==c.getModel().getCenterY()-30){
+       if (model.getCenterY()==Shelf.secondLine-30 && model.getCenterX()!=c.getModel().getCenterX()+40) movmentXX((int)c.getModel().getCenterX()+40);
+       if (model.getCenterX()==c.getModel().getCenterX()+40) movmentYY((int)c.getModel().getCenterY());
+       if (model.getCenterY()==c.getModel().getCenterY() && model.getCenterX()==c.getModel().getCenterX()+40){
            long start=System.currentTimeMillis();
            while (System.currentTimeMillis()-start<1000){}
            c.setNeedHelp(false);
@@ -93,10 +97,10 @@ public class Consultant {
            status = "wait";
        }
        if (model.getCenterX()==850+index*50) movmentYY(appearY);
-       if (model.getCenterY()!=Shelf.secondLine-60&& model.getCenterX()!=850+index*50) {
-           movmentYY(Shelf.secondLine - 60);
+       if (model.getCenterY()!=Shelf.secondLine-30&& model.getCenterX()!=850+index*50) {
+           movmentYY(Shelf.secondLine - 30);
        }
-       if (model.getCenterY() == Shelf.secondLine - 60) movmentXX(850+index*50);
+       if (model.getCenterY() == Shelf.secondLine - 30) movmentXX(850+index*50);
    }
    public void movmentYY(int y){
        if (y < model.getCenterY()) {

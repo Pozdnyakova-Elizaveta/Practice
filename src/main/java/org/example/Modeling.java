@@ -23,10 +23,10 @@ public class Modeling {
     static int numberCustomer;
     static int numberShelf;
     static int numberConsultant;
-    private ArrayList<Consultant> co;
-    private ArrayList<Cashier> ca;
-    private ArrayList<Shelf> s;
-    private ArrayList<Customer> c;
+    static ArrayList<Consultant> co;
+    static ArrayList<Cashier> ca;
+    static ArrayList<Shelf> s;
+    static ArrayList<Customer> c;
     private Timer timerConsultant;
     private TimerTask taskConsultant;
     private Timer timerCustomer;
@@ -92,6 +92,8 @@ public class Modeling {
         pauseButton.setPrefSize(50,25);
         root.getChildren().add(pauseButton);
         pauseButton.setOnAction(e -> {
+            timerConsultant.cancel();
+            timerCustomer.cancel();
         });
         Button speedButton=new Button("x2");
         speedButton.setLayoutX(1100);
@@ -173,13 +175,13 @@ public class Modeling {
         wallRight.setStrokeWidth(2);
         Polyline wallStockRight=new Polyline();
         wallStockRight.getPoints().addAll(new Double[]{
-                175.0, 450.0,
-                250.0, 450.0,
+                175.0, 500.0,
+                250.0, 500.0,
                 250.0, 700.0 });
         wallStockRight.setFill(Color.WHITESMOKE);
         wallStockRight.setStrokeWidth(2);
         wallStockRight.setStroke(Color.BLACK);
-        Line wallStockLeft=new Line(0.0,450.0,75.0,450.0);
+        Line wallStockLeft=new Line(0.0,500.0,75.0,500.0);
         wallStockLeft.setStrokeWidth(2);
         root.getChildren().addAll(wallLeft,wallRight,wallStockRight,wallStockLeft);
     }
@@ -190,8 +192,8 @@ public class Modeling {
         for (i = 0; i != c.size(); i++) c.get(i).updateCustomer(gc);
     }
     public void cicleCustomer(Customer cu){
-        Timer t=new Timer();
-        t.schedule(new TimerTask() {
+        timerCustomer=new Timer();
+        timerCustomer.schedule(new TimerTask() {
             Color color;
             boolean dvih=false;
             @Override
@@ -209,7 +211,9 @@ public class Modeling {
                                 cu.setStatus("exit");
                                 Statistics.exitCustomer+=1;
                             }
-                            if (fl==true) cu.setStatus("product");
+                            if (fl==true) {
+                                cu.setStatus("product");
+                            }
                         }
                         break;
                     }
@@ -241,11 +245,11 @@ public class Modeling {
                     }
                     case "exit":{
                         if (color==Color.GREEN){
-                            if (cu.getModel().getCenterX()!=Customer.appearX && cu.getModel().getCenterX()!=ca.get(cu.getNumCheckout()).getModel().getCenterX()+30 && (cu.getModel().getCenterY()==Cashier.appearY+90)) cu.movmentXX((int)ca.get(cu.getNumCheckout()).getModel().getCenterX()+30);
+                            if (cu.getModel().getCenterX()!=Customer.appearX && cu.getModel().getCenterX()!=ca.get(cu.getNumCheckout()).getModel().getCenterX()+30 && (cu.getModel().getCenterY()==Cashier.appearY+90)) cu.movmentXX((int)ca.get(cu.getNumCheckout()).getModel().getCenterX()+50);
                         }
                         cu.colorChange(color);
-                        if (cu.getModel().getCenterY()!=Customer.appearY && cu.getModel().getCenterX()!=Customer.appearX) cu.movmentYY(Shelf.secondLine-60);
-                        if (cu.getModel().getCenterY()==Shelf.secondLine-60 && cu.getModel().getCenterX()!=Customer.appearX) cu.movmentXX(Customer.appearX);
+                        if (cu.getModel().getCenterY()!=Customer.appearY && cu.getModel().getCenterX()!=Customer.appearX) cu.movmentYY(Shelf.secondLine-90);
+                        if (cu.getModel().getCenterY()==Shelf.secondLine-90 && cu.getModel().getCenterX()!=Customer.appearX) cu.movmentXX(Customer.appearX);
                         if (cu.getModel().getCenterY()!=Customer.appearY && cu.getModel().getCenterX()==Customer.appearX) cu.movmentYY(Customer.appearY);
                         if (cu.getModel().getCenterY()==Customer.appearY) {
                             c.remove(cu);
@@ -263,14 +267,14 @@ public class Modeling {
                         }
                     }
                 }
-                if (c.size()==0) t.cancel();
+                if (c.size()==0) timerCustomer.cancel();
             }
         },0, cu.getMovementSpeed());
     }
     public void cicleConsultant(Consultant con){
-        Timer t=new Timer();
+        timerConsultant=new Timer();
         int i;
-            t.schedule(new TimerTask() {
+            timerConsultant.schedule(new TimerTask() {
                 @Override
                 public void  run(){
                     search(con);
