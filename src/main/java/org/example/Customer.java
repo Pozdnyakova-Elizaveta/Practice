@@ -47,6 +47,12 @@ public class Customer {
     public Circle getModel(){
         return  model;
     }
+    public int getSizeProductList(){
+        return productList.size();
+    }
+    public String getProductList(int i){
+        return productList.get(i);
+    }
     public boolean getNeedHelp(){
         return needHelp;
     }

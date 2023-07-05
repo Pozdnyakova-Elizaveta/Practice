@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -26,7 +27,14 @@ public class Modeling {
     private ArrayList<Cashier> ca;
     private ArrayList<Shelf> s;
     private ArrayList<Customer> c;
+    private Timer timerConsultant;
+    private TimerTask taskConsultant;
+    private Timer timerCustomer;
+    private TimerTask taskCustomer;
+    private int clickCount = 0;
+    private int speed;
     public Modeling(int numberCashier, int numberCustomer,int numberShelf, int numberConsultant){
+        speed=1;
         this.numberCashier=numberCashier;
         this.numberShelf=numberShelf;
         this.numberConsultant=numberConsultant;
@@ -46,6 +54,52 @@ public class Modeling {
         Pane root = new Pane();
         Canvas canvas = new Canvas(1200, 700);
         GraphicsContext gc = canvas.getGraphicsContext2D();
+        canvas.setOnMouseMoved(e -> {
+            double mouseX = e.getX();
+            double mouseY = e.getY();
+            for (int i=0;i!=c.size();i++){
+                if (c.get(i).getModel().contains(mouseX, mouseY)) {
+                    String text= new String("Количество денег - "+c.get(i).getAmountMoney()+"\nОбщая сумма товаров - "+c.get(i).getTotalSpend()+"\nСписок товаров");
+                    for (int j=0;j!=c.get(i).getSizeProductList();j++){
+                        text=text+"\n"+c.get(i).getProductList(j);
+                    }
+                    gc.setFill(Color.BLACK);
+                    gc.fillText(text, c.get(i).getModel().getCenterX()+20, c.get(i).getModel().getCenterY()-20);
+                }
+            }
+            for (int i=0;i!=s.size();i++){
+                if (s.get(i).getModel().contains(mouseX, mouseY)){
+                    String text= new String("Цены товаров:");
+                    for (int j=0;j!=s.get(i).getSizePrice();j++){
+                        text=text+" "+s.get(i).getPrice(j)+",";
+                        if (j==2) text=text+"\n";
+                    }
+                    gc.setFill(Color.BLACK);
+                    gc.fillText(text, s.get(i).getModel().getX()-20, s.get(i).getModel().getY()-20);
+                }
+            }
+            for (int i=0; i!=numberCashier;i++){
+                if (ca.get(i).getModel().contains(mouseX, mouseY)){
+                    String text= new String("Прибыль: "+ca.get(i).getProfit()+"\nКоличество пройденных покупателей: "+ca.get(i).getNumberBuyers());
+                    gc.setFill(Color.BLACK);
+                    gc.fillText(text, ca.get(i).getModel().getCenterX()-20, ca.get(i).getModel().getCenterY()-60);
+                }
+            }
+        });
+        Button pauseButton = new Button("Пауза");
+        pauseButton.setLayoutX(1000);
+        pauseButton.setLayoutY(10);
+        pauseButton.setPrefSize(50,25);
+        root.getChildren().add(pauseButton);
+        pauseButton.setOnAction(e -> {
+        });
+        Button speedButton=new Button("x2");
+        speedButton.setLayoutX(1100);
+        speedButton.setLayoutY(10);
+        speedButton.setPrefSize(50,25);
+        root.getChildren().add(speedButton);
+        speedButton.setOnAction(e -> {
+        });
         int i;
         for (i=0;i!=numberConsultant;i++){
             co.add(new Consultant());
@@ -277,5 +331,4 @@ public class Modeling {
             i++;
         }
     }
-
 }

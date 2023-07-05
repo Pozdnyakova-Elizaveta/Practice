@@ -12,8 +12,10 @@ public class Cashier {
     static final int appearY=75;
     private int queueBuyers;
     private int serviceTime;
+    private int numberBuyers;
     private Circle model;
     public Cashier(){
+        numberBuyers=0;
         queueBuyers=0;
         serviceTime=(int)(Math.random()*1000)+2000;
         model=new Circle();
@@ -27,6 +29,9 @@ public class Cashier {
     }
     public Circle getModel(){
         return  model;
+    }
+    public int getNumberBuyers(){
+        return numberBuyers;
     }
     public int getQueueBuyers(){
         return queueBuyers;
@@ -43,6 +48,7 @@ public class Cashier {
         while(System.currentTimeMillis()-start<time){}
         queueBuyers= queueBuyers-1;
         profit=profit+customer.getTotalSpend();
+        numberBuyers++;
         customer.setStatus("exit");
     }
 }
