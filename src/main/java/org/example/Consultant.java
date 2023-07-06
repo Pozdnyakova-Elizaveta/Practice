@@ -2,78 +2,82 @@ package org.example;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 
-public class Consultant extends MovingModel {
-    static int quantity;
-    static final int appearY=75;
+public class Consultant extends MovingModel {   //класс консультанта
+    static int quantity;        //количество консультантов
+    static final int appearY=75;    //появление консультанта по Y
     public Consultant(){
         super(10,850+quantity*50,appearY,Color.DARKRED);
         status="wait";
         quantity++;
     }
 
-    public void updateConsultant(GraphicsContext gc){
+    public void update(GraphicsContext gc){     //обновление канвы для перерисовки консультанта
         gc.setStroke(model.getStroke());
         gc.setLineWidth(model.getStrokeWidth());
         gc.setFill(model.getFill()); // установка цвета заливки
-        gc.strokeOval(model.getCenterX() - model.getRadius(), model.getCenterY() - model.getRadius(), model.getRadius() * 2, model.getRadius() * 2); // рисование круга на Canvas
-        gc.fillOval(model.getCenterX() - model.getRadius(), model.getCenterY() - model.getRadius(), model.getRadius() * 2, model.getRadius() * 2);
+        gc.strokeOval(model.getCenterX() - model.getRadius(), model.getCenterY() - model.getRadius(),
+                model.getRadius() * 2, model.getRadius() * 2); // рисование круга на Canvas
+        gc.fillOval(model.getCenterX() - model.getRadius(), model.getCenterY() - model.getRadius(),
+                model.getRadius() * 2, model.getRadius() * 2);
     }
-   public void onStock(){
+   public void onStock(){                  //движение по траектории к складу
         if (model.getCenterX()==120){
-            movementYY(550);
+            movementY(550);
         }
-        if (model.getCenterX()==120 && model.getCenterY()==550) {
+        if (model.getCenterX()==120 && model.getCenterY()==550) {   //если консультант на складе
             long start=System.currentTimeMillis();
-            while (System.currentTimeMillis()-start<1000){}
-            status = "to shelf";
+            while (System.currentTimeMillis()-start<1000){} //задержка по времени
+            status = "to shelf";    //статус "к стеллажу"
         }
         if (model.getCenterY()!=Shelf.secondLine-30 && model.getCenterX()!=120) {
-            movementYY(Shelf.secondLine - 30);
+            movementY(Shelf.secondLine - 30);
        }
-       if (model.getCenterY() == Shelf.secondLine - 30) movementXX(120);
+       if (model.getCenterY() == Shelf.secondLine - 30) movementX(120);
    }
-   public void toShelf(Shelf shelf){
+   public void toShelf(Shelf shelf){        //движение по траектории к стеллажу
        if (model.getCenterY()!=Shelf.firstLine-30 && model.getCenterX()!=shelf.getModel().getX()+70) {
-           movementYY(Shelf.firstLine-30);
+           movementY(Shelf.firstLine-30);
        }
-       if (model.getCenterY()==Shelf.firstLine-30) movementXX((int)shelf.getModel().getX()+70);
-       if (model.getCenterX()==shelf.getModel().getX()+70) movementYY((int)shelf.getModel().getY()+80);
+       if (model.getCenterY()==Shelf.firstLine-30) movementX((int)shelf.getModel().getX()+70);
+       if (model.getCenterX()==shelf.getModel().getX()+70) movementY((int)shelf.getModel().getY()+80);
        if (model.getCenterX()==shelf.getModel().getX()+70 && model.getCenterY()==shelf.getModel().getY()+80) {
+           //когда консультант у стеллажа
            long start=System.currentTimeMillis();
-           while (System.currentTimeMillis()-start<1000){}
-           shelf.setNumberGoods(10);
+           while (System.currentTimeMillis()-start<1000){}  //задержка по времени
+           shelf.setNumberGoods(10);                        //добавление товаров и формирование цен
            for (int i=0;i!=shelf.getNumberGoods();i++){
                shelf.setPrice((int)(Math.random()*71)+30);
            }
            shelf.updateText();
            shelf.setFilling(0);
-           status = "place";
+           status = "place appear"; //статус "место появления"
        }
    }
-   public void help(Customer c){
+   public void help(Customer c){    //движение по траектории к покупателю, нуждающемуся в помощи
        if (model.getCenterY()!=Shelf.secondLine-30&& model.getCenterX()!=c.getModel().getCenterX()+40) {
-           movementYY(Shelf.secondLine - 30);
+           movementY(Shelf.secondLine - 30);
        }
-       if (model.getCenterY()==Shelf.secondLine-30 && model.getCenterX()!=c.getModel().getCenterX()+40) movementXX((int)c.getModel().getCenterX()+40);
-       if (model.getCenterX()==c.getModel().getCenterX()+40) movementYY((int)c.getModel().getCenterY());
+       if (model.getCenterY()==Shelf.secondLine-30 && model.getCenterX()!=c.getModel().getCenterX()+40)
+           movementX((int)c.getModel().getCenterX()+40);
+       if (model.getCenterX()==c.getModel().getCenterX()+40) movementY((int)c.getModel().getCenterY());
        if (model.getCenterY()==c.getModel().getCenterY() && model.getCenterX()==c.getModel().getCenterX()+40){
+           //когда консультант подошел к покупателю
            long start=System.currentTimeMillis();
-           while (System.currentTimeMillis()-start<1000){}
-           c.setNeedHelp(false);
+           while (System.currentTimeMillis()-start<1000){}  //задержка по времени
+           c.setNeedHelp(false);        //изменение флага помощи
            c.setFilling(0);
-           status="place";
+           status="place appear";   //статус "место появления"
        }
    }
-   public void place(int index){
+   public void placeAppear(int index){    //возвращение консультанта к месту ожидания работы
        if (model.getCenterY()==appearY && model.getCenterX()==850+index*50) {
-           status = "wait";
+           status = "wait"; //статус "ожидание"
        }
-       if (model.getCenterX()==850+index*50) movementYY(appearY);
+       if (model.getCenterX()==850+index*50) movementY(appearY);
        if (model.getCenterY()!=Shelf.secondLine-30&& model.getCenterX()!=850+index*50) {
-           movementYY(Shelf.secondLine - 30);
+           movementY(Shelf.secondLine - 30);
        }
-       if (model.getCenterY() == Shelf.secondLine - 30) movementXX(850+index*50);
+       if (model.getCenterY() == Shelf.secondLine - 30) movementX(850+index*50);
    }
 }

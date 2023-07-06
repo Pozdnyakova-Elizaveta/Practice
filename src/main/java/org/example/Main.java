@@ -28,12 +28,12 @@ public class Main extends Application { //основной класс прило
     } //запуск приложения
     @Override
     public void start(Stage stage) {        //определение графического интерфейса
-        Group group = new Group();
+        Group group = new Group();          //контейнер для отображения элементов окна
         stage.setResizable(false);
         createText(group);
         createChoiceElement(group);
-        Scene scene = new Scene(group);
-        stage.setScene(scene);
+        Scene scene = new Scene(group); //создание сцены с корневым узлом group
+        stage.setScene(scene);  //установка сцены для окна
         stage.setTitle("Практика");
         stage.setWidth(1200);
         stage.setHeight(700);
@@ -41,12 +41,13 @@ public class Main extends Application { //основной класс прило
             Platform.exit();
             System.exit(0);
         });
-        start.setOnAction(e -> {    //при нажатии на кнопку "Запуск" - переход к новой странице с передачей данных с элементов выбора
+        start.setOnAction(e -> {//при нажатии на кнопку "Запуск" - переход к новому окну с передачей данных с элементов выбора
             stage.hide();
-            Modeling modeling=new Modeling(choiceBoxCashier.getValue(),(int)choiceCustomer.getValue(),choiceBoxShelf.getValue(),choiceBoxConsultant.getValue());
-            modeling.change();
+            Modeling modeling=new Modeling(choiceBoxCashier.getValue(),(int)choiceCustomer.getValue(),
+                    choiceBoxShelf.getValue(),choiceBoxConsultant.getValue());
+            modeling.modelingProcess();
         });
-        stage.show();
+        stage.show();   //отображение окна
     }
     public void createText(Group group){        //создание и вывод надписей
         Text title=new Text("Имитационная модель магазина");

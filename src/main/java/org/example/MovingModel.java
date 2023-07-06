@@ -1,12 +1,13 @@
 package org.example;
 
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-public class MovingModel {
-    protected Circle model;
-    protected int movementSpeed;
-    protected String status;
+abstract class MovingModel {        //абстрактный класс для движущихся моделей
+    protected Circle model;         //модель в виде круга
+    protected int movementSpeed;    //скорость движения
+    protected String status;        //статус для определения траектории движения
     public MovingModel(int coeffSpeed, int appearX, int appearY, Color color){
         movementSpeed=(int)(Math.random()*coeffSpeed)+2;
         model=new Circle();
@@ -29,7 +30,7 @@ public class MovingModel {
     public void setStatus(String status){
         this.status=status;
     }
-    public void movementYY(int y){
+    public void movementY(int y){  //движение по Y
         if (y < model.getCenterY()) {
             model.setCenterY(model.getCenterY() - 1);
         }
@@ -37,7 +38,7 @@ public class MovingModel {
             model.setCenterY(model.getCenterY() + 1);
         }
     }
-    public void movementXX(int x){
+    public void movementX(int x){   //движение по X
         if (x < model.getCenterX()) {
             model.setCenterX(model.getCenterX() - 1);
         }
@@ -45,5 +46,6 @@ public class MovingModel {
             model.setCenterX(model.getCenterX() + 1);
         }
     }
+    public abstract void update(GraphicsContext gc);    //обновление канвы для перерисовки модели
 }
 

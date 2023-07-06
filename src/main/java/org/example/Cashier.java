@@ -42,7 +42,8 @@ public class Cashier {
     public void service(Customer customer){     //обслуживание покупателя
         long start=System.currentTimeMillis();
         long time= customer.getPurchases()*serviceTime;
-        while(System.currentTimeMillis()-start<time){}  //задержка по времени в зависимости от скорости кассира и количества товара
+        //задержка по времени в зависимости от скорости кассира и количества товара
+        while(System.currentTimeMillis()-start<time){}
         queueBuyers= queueBuyers-1; //уменьшение очереди к кассиру
         profit=profit+customer.getTotalSpend();     //увеличение прибыли
         numberBuyers++;             //увеличение числа обслуженных покупателей
