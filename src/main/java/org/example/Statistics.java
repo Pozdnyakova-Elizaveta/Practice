@@ -1,9 +1,8 @@
 package org.example;
 
-import javafx.application.Application;
+
 import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -11,11 +10,11 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class Statistics {
+public class Statistics {       //класс окна статистики
     private Stage stage;
-    static int exitCustomer;
-    static int notWaitingCustomer;
-    static int highPriceCustomer;
+    static int exitCustomer;    //количество покупателей, не совершивших покупку
+    static int notWaitingCustomer;  //количество покупателей, не дождавшихся помощи консультанта/выкладки товара
+    static int highPriceCustomer;   //количество покупателей, не купивших товар из-за высокой цены
     public Statistics(){
         exitCustomer=0;
         notWaitingCustomer=0;
@@ -26,12 +25,12 @@ public class Statistics {
         stage.setHeight(700);
         stage.setResizable(false);
     }
-    public void display(int [] profit){
-        stage.setOnCloseRequest(e -> {
-            Platform.exit(); // Закрытие Javafx
-            System.exit(0); // Завершение программы
+    public void display(int [] profit){     //функция вывода окна и его графических элементов
+        stage.setOnCloseRequest(e -> {      //закрытие приложения при нажатии на крестик
+            Platform.exit();
+            System.exit(0);
         });
-        Text title= new Text("Статистика запуска");
+        Text title= new Text("Статистика запуска");     //вывод информации
         title.setLayoutY(70);
         title.setLayoutX(320);
         title.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));

@@ -15,15 +15,40 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
 import javafx.scene.Scene;
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
-public class Main extends Application {
+
+public class Main extends Application { //основной класс приложения
+    Slider choiceCustomer;
+    Button start;
+    ChoiceBox<Integer> choiceBoxConsultant;
+    ChoiceBox<Integer> choiceBoxCashier;
+    ChoiceBox<Integer> choiceBoxShelf;
+
     public static void main(String[] args) {
         Application.launch(args);
-    }
+    } //запуск приложения
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) {        //определение графического интерфейса
+        Group group = new Group();
         stage.setResizable(false);
+        createText(group);
+        createChoiceElement(group);
+        Scene scene = new Scene(group);
+        stage.setScene(scene);
+        stage.setTitle("Практика");
+        stage.setWidth(1200);
+        stage.setHeight(700);
+        stage.setOnCloseRequest(e -> {  //при нажатии на крестик - полное закрытие программы
+            Platform.exit();
+            System.exit(0);
+        });
+        start.setOnAction(e -> {    //при нажатии на кнопку "Запуск" - переход к новой странице с передачей данных с элементов выбора
+            stage.hide();
+            Modeling modeling=new Modeling(choiceBoxCashier.getValue(),(int)choiceCustomer.getValue(),choiceBoxShelf.getValue(),choiceBoxConsultant.getValue());
+            modeling.change();
+        });
+        stage.show();
+    }
+    public void createText(Group group){        //создание и вывод надписей
         Text title=new Text("Имитационная модель магазина");
         Text numberCashier=new Text("Выберите число кассиров");
         Text numberCustomer=new Text("Выберите число покупателей");
@@ -43,55 +68,46 @@ public class Main extends Application {
         numberConsultant.setLayoutY(280);
         title.setLayoutY(70);
         title.setLayoutX(220);
+        Text info=new Text("Реакции покупателей:\n1.Красный - покупатель ушел из-за длинных очередей\n" +
+                "2.Синий - покупатель ушел, т.к. не было нужных товаров/не помог консультант\n" +
+                "3.Зеленый - покупатель ушел с покупками\n4.Оранжевый - необходимого товара нет в магазине\n" +
+                "5.Фиолетовый - необходимого товара нет на полке\n6.Желтый - покупателю не хватает денег на товар");
+        info.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
+        info.setLayoutX(200);
+        info.setLayoutY(340);
         title.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
-        Button start = new Button("Запуск");
+        group.getChildren().addAll(title, numberCustomer,numberShelf,numberCashier,numberConsultant, info);
+    }
+    public void createChoiceElement(Group group){   //создание элементов выбора
+        start = new Button("Запуск");              //нопка запуска модели
         start.setLayoutX(500);
         start.setLayoutY(560);
         start.setPrefSize(200,50);
-        Slider choiceCustomer=new Slider(1.0,100.0,5.0);
+        choiceCustomer=new Slider(1.0,100.0,5.0);   //выбор числа покупателей
         choiceCustomer.setLayoutX(800);
         choiceCustomer.setLayoutY(140);
         choiceCustomer.setShowTickLabels(true);
-        Label label = new Label(String.valueOf((int)(choiceCustomer.getValue())));
-        label.setLayoutX(1000);
-        label.setLayoutY(140);
+        Label numberCustomer = new Label(String.valueOf((int)(choiceCustomer.getValue()))); //вывод значения Slider
+        numberCustomer.setLayoutX(1000);
+        numberCustomer.setLayoutY(140);
         choiceCustomer.valueProperty().addListener((observable, oldValue, newValue) -> {
-            label.setText(String.valueOf(newValue.intValue()));
+            numberCustomer.setText(String.valueOf(newValue.intValue()));
         });
         ObservableList<Integer> choiceConsultant = FXCollections.observableArrayList(0,1,2,3,4,5,6);
         ObservableList<Integer> choiceCashier = FXCollections.observableArrayList(1,2,3);
         ObservableList<Integer> choiceShelf = FXCollections.observableArrayList(1,2,3,4,5,6,7,8);
-        ChoiceBox<Integer> choiceBoxConsultant = new ChoiceBox<Integer>(choiceConsultant);
+        choiceBoxConsultant = new ChoiceBox<Integer>(choiceConsultant);     //выбор числа консультантов
         choiceBoxConsultant.setLayoutX(800);
         choiceBoxConsultant.setLayoutY(260);
         choiceBoxConsultant.setValue(0);
-        ChoiceBox<Integer> choiceBoxCashier = new ChoiceBox<Integer>(choiceCashier);
+        choiceBoxCashier = new ChoiceBox<Integer>(choiceCashier);           //выбор числа кассиров
         choiceBoxCashier.setLayoutX(800);
         choiceBoxCashier.setLayoutY(180);
         choiceBoxCashier.setValue(1);
-        ChoiceBox<Integer> choiceBoxShelf = new ChoiceBox<Integer>(choiceShelf);
+        choiceBoxShelf = new ChoiceBox<Integer>(choiceShelf);               //выбор числа полок
         choiceBoxShelf.setLayoutX(800);
         choiceBoxShelf.setLayoutY(220);
         choiceBoxShelf.setValue(1);
-        Text info=new Text("Реакции покупателей:\n1.Красный - покупатель ушел из-за длинных очередей\n2.Синий - покупатель ушел, т.к. не было нужных товаров/не помог консультант\n3.Зеленый - покупатель ушел с покупками\n4.Оранжевый - необходимого товара нет в магазине\n5.Фиолетовый - необходимого товара нет на полке\n6.Желтый - покупателю не хватает денег на товар");
-        info.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
-        info.setLayoutX(200);
-        info.setLayoutY(340);
-        Group group = new Group(title, numberCustomer, numberCashier, numberConsultant, numberShelf, start, choiceBoxCashier, choiceBoxConsultant,choiceBoxShelf,choiceCustomer,label, info);
-        Scene scene = new Scene(group);
-        stage.setScene(scene);
-        stage.setTitle("Практика");
-        stage.setWidth(1200);
-        stage.setHeight(700);
-        stage.setOnCloseRequest(e -> {
-            Platform.exit(); // Закрытие Javafx
-            System.exit(0); // Завершение программы
-        });
-        start.setOnAction(e -> {
-            stage.hide();
-            Modeling modeling=new Modeling(choiceBoxCashier.getValue(),(int)choiceCustomer.getValue(),choiceBoxShelf.getValue(),choiceBoxConsultant.getValue());
-            modeling.change();
-        });
-        stage.show();
+        group.getChildren().addAll(start, choiceBoxCashier,choiceBoxShelf,choiceBoxConsultant,choiceCustomer,numberCustomer);
     }
 }

@@ -17,7 +17,7 @@ public class Cashier {
     public Cashier(){
         numberBuyers=0;
         queueBuyers=0;
-        serviceTime=(int)(Math.random()*1000)+2000;
+        serviceTime=(int)(Math.random()*2000)+3000;
         model=new Circle();
         model.setCenterX(100+quantity*100);
         model.setCenterY(appearY);
