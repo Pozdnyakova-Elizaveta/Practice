@@ -138,6 +138,7 @@ public class Modeling {
                 public void run() {
                     if (count != numberCustomer && !isPaused) {
                         c.add(new Customer());
+                        Statistics.totalBuyer++;
                         cicleCustomer(c.get(c.size() - 1));
                         count++;
                     }
@@ -226,7 +227,7 @@ public class Modeling {
                     if (!isPaused) {
                         switch (cu.getStatus()) {
                             case "entry": {
-                                if (cu.getModel().getCenterY() != 100) cu.movmentYY(100);
+                                if (cu.getModel().getCenterY() != 100) cu.movementYY(100);
                                 if (cu.getModel().getCenterY() == 100) {
                                     boolean fl = false;
                                     for (int i = 0; i != numberCashier; i++) {
@@ -272,15 +273,15 @@ public class Modeling {
                             case "exit": {
                                 if (color == Color.GREEN) {
                                     if (cu.getModel().getCenterX() != Customer.appearX && cu.getModel().getCenterX() != ca.get(cu.getNumCheckout()).getModel().getCenterX() + 30 && (cu.getModel().getCenterY() == Cashier.appearY + 90))
-                                        cu.movmentXX((int) ca.get(cu.getNumCheckout()).getModel().getCenterX() + 50);
+                                        cu.movementXX((int) ca.get(cu.getNumCheckout()).getModel().getCenterX() + 50);
                                 }
                                 cu.colorChange(color);
                                 if (cu.getModel().getCenterY() != Customer.appearY && cu.getModel().getCenterX() != Customer.appearX)
-                                    cu.movmentYY(Shelf.secondLine - 90);
+                                    cu.movementYY(Shelf.secondLine - 90);
                                 if (cu.getModel().getCenterY() == Shelf.secondLine - 90 && cu.getModel().getCenterX() != Customer.appearX)
-                                    cu.movmentXX(Customer.appearX);
+                                    cu.movementXX(Customer.appearX);
                                 if (cu.getModel().getCenterY() != Customer.appearY && cu.getModel().getCenterX() == Customer.appearX)
-                                    cu.movmentYY(Customer.appearY);
+                                    cu.movementYY(Customer.appearY);
                                 if (cu.getModel().getCenterY() == Customer.appearY) {
                                     c.remove(cu);
                                 }
@@ -291,7 +292,7 @@ public class Modeling {
                             for (int i = 0; i != c.size(); i++) {
                                 if (c.get(i).getStatus() == "queue" && c.get(i).getModel().getCenterX() == ca.get(cu.getNumCheckout()).getModel().getCenterX() && c.get(i).getModel().getCenterY() != Cashier.appearY + 90 + 35 * (c.get(i).getNumQueue() - 1))
                                     if (c.get(i).getModel().getCenterY() >= Cashier.appearY + 90)
-                                        c.get(i).movmentYY(Cashier.appearY + 90 + 35 * (c.get(i).getNumQueue() - 1));
+                                        c.get(i).movementYY(Cashier.appearY + 90 + 35 * (c.get(i).getNumQueue() - 1));
                                 if (c.get(i).getStatus() == "queue" && c.get(i).getModel().getCenterX() == ca.get(cu.getNumCheckout()).getModel().getCenterX() && c.get(i).getModel().getCenterY() == Cashier.appearY + 90 + 35 * (c.get(i).getNumQueue() - 1)) {
                                     c.get(i).setNumQueue(c.get(i).getNumQueue() - 1);
                                     if (c.get(i).getNumQueue() == 0) dvih = false;

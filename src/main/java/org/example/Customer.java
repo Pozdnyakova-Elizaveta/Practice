@@ -2,17 +2,12 @@ package org.example;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.text.Text;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
-public class Customer {
+public class Customer extends  MovingModel{
     static final int appearX=750;
     static final int appearY=25;
-    private int movementSpeed;
     private int amountMoney;
     private int totalSpend;
     private boolean needHelp;
@@ -21,10 +16,9 @@ public class Customer {
     private int filling;
     private int purchases;
     private ArrayList<String> productList;
-    private String status;
     private int validQueue;
-    private Circle model;
     public Customer(){
+        super(25,appearX,appearY,Color.BLACK);
         totalSpend=0;
         filling=0;
         needHelp=false;
@@ -32,20 +26,9 @@ public class Customer {
         status="entry";
         amountMoney=(int)(Math.random()*200)+50;
         purchases=0;
-        movementSpeed=(int)(Math.random()*25)+2;
         int sizeProductList=(int)(Math.random()*5+1);
         productList= new ArrayList<String>();
-        for (int i=0;i!=sizeProductList;i++) productList.add(Shelf.type[(int)(Math.random()*8)]);
-        model=new Circle();
-        model.setCenterX(appearX);
-        model.setCenterY(appearY);
-        model.setRadius(15);
-        model.setFill(Color.WHITE);
-        model.setStrokeWidth(5);
-        model.setStroke(Color.BLACK);
-    }
-    public Circle getModel(){
-        return  model;
+        for (int i=0;i!=sizeProductList;i++) productList.add(Shelf.TYPE[(int)(Math.random()*8)]);
     }
     public int getSizeProductList(){
         return productList.size();
@@ -91,11 +74,11 @@ public class Customer {
     }
     public void movementCheckout(Cashier c){
         if (model.getCenterY()!=Shelf.secondLine-40 && model.getCenterX()!=c.getModel().getCenterX()) {
-            movmentYY(Shelf.secondLine - 40);
+            movementYY(Shelf.secondLine - 40);
         }
-        if (model.getCenterY()==Shelf.secondLine-40 && model.getCenterX()!=c.getModel().getCenterX()) movmentXX((int)c.getModel().getCenterX());
+        if (model.getCenterY()==Shelf.secondLine-40 && model.getCenterX()!=c.getModel().getCenterX()) movementXX((int)c.getModel().getCenterX());
         if (model.getCenterX()==c.getModel().getCenterX()) {
-            movmentYY((int)c.getModel().getCenterY()+90+35*(c.getQueueBuyers()));
+            movementYY((int)c.getModel().getCenterY()+90+35*(c.getQueueBuyers()));
         }
         if (model.getCenterX()==c.getModel().getCenterX() && model.getCenterY()==c.getModel().getCenterY()+90+35*(c.getQueueBuyers())){
             numQueue=c.getQueueBuyers();
@@ -131,11 +114,11 @@ public class Customer {
     }
     public void movementShelf(Shelf shelf,boolean fl){
         if (model.getCenterX()!=shelf.getModel().getX()+70){
-            if (model.getCenterY()!=Shelf.secondLine-120 && model.getCenterX()<=shelf.getModel().getX()) movmentYY(Shelf.secondLine-120);
-            if (model.getCenterY()!=Shelf.secondLine-60 && model.getCenterX()>shelf.getModel().getX()) movmentYY(Shelf.secondLine-60);
-            if ((model.getCenterY()==Shelf.secondLine-120 && model.getCenterX()<=shelf.getModel().getX() ) || (model.getCenterY()==Shelf.secondLine-60 && model.getCenterX()>shelf.getModel().getX())) movmentXX((int)shelf.getModel().getX()+70);
+            if (model.getCenterY()!=Shelf.secondLine-120 && model.getCenterX()<=shelf.getModel().getX()) movementYY(Shelf.secondLine-120);
+            if (model.getCenterY()!=Shelf.secondLine-60 && model.getCenterX()>shelf.getModel().getX()) movementYY(Shelf.secondLine-60);
+            if ((model.getCenterY()==Shelf.secondLine-120 && model.getCenterX()<=shelf.getModel().getX() ) || (model.getCenterY()==Shelf.secondLine-60 && model.getCenterX()>shelf.getModel().getX())) movementXX((int)shelf.getModel().getX()+70);
         }
-        if (model.getCenterX()==shelf.getModel().getX()+70) movmentYY((int)shelf.getModel().getY()+movementSpeed*5);
+        if (model.getCenterX()==shelf.getModel().getX()+70) movementYY((int)shelf.getModel().getY()+movementSpeed*5);
         if (model.getCenterX()==shelf.getModel().getX()+70 && model.getCenterY()==shelf.getModel().getY()+movementSpeed*5){
             if (shelf.getNumberGoods()==0){
                 long start = System.currentTimeMillis();
@@ -152,8 +135,6 @@ public class Customer {
                     while (System.currentTimeMillis() - start < 5000) {}
                     if (needHelp==true) {
                         productList.remove(0);
-                        start = System.currentTimeMillis();
-                        while (System.currentTimeMillis() - start < 100) {}
                     }
                 }
                 if (needHelp==false && shelf.getNumberGoods()!=0 && shelf.getSizePrice()!=0) {
@@ -167,25 +148,25 @@ public class Customer {
 
                     }
                     if (min<amountMoney) {
-                        long start = System.currentTimeMillis();
-                        while (System.currentTimeMillis() - start < 500) {
+                            long start = System.currentTimeMillis();
+                            while (System.currentTimeMillis() - start < 500) {
+                            }
+                            shelf.setNumberGoods(shelf.getNumberGoods() - 1);
+                            totalSpend = totalSpend + min;
+                            amountMoney = amountMoney - min;
+                            shelf.updateText();
+                            purchases = purchases + 1;
+                            if (shelf.getSizePrice() != 0 && shelf.getSizePrice() != ind) shelf.removePrice(ind);
+                            if (productList.size() != 0 && productList.get(0).equals(shelf.getTypeShelf())) productList.remove(0);
                         }
-                        shelf.setNumberGoods(shelf.getNumberGoods() - 1);
-                        totalSpend=totalSpend+min;
-                        amountMoney=amountMoney-min;
-                        shelf.updateText();
-                        purchases = purchases + 1;
-                        if (shelf.getSizePrice()!=0 && shelf.getSizePrice()!=ind) shelf.removePrice(ind);
-                        if (productList.size() != 0) productList.remove(0);
-                    }
                     else {
-                        colorChange(Color.YELLOW);
-                        Statistics.highPriceCustomer+=1;
-                        long start = System.currentTimeMillis();
-                        while (System.currentTimeMillis() - start < 500) {
-                        }
-                        if (productList.size() != 0) productList.remove(0);
-                        colorChange(Color.WHITE);
+                            colorChange(Color.YELLOW);
+                            Statistics.highPriceCustomer += 1;
+                            long start = System.currentTimeMillis();
+                            while (System.currentTimeMillis() - start < 500) {
+                            }
+                            if (productList.size() != 0 && productList.get(0).equals(shelf.getTypeShelf())) productList.remove(0);
+                            colorChange(Color.WHITE);
                     }
                 }
                 if (needHelp==true) {
@@ -210,43 +191,6 @@ public class Customer {
             if (needHelp==false)gc.fillText(Character.toString(productList.get(0).charAt(0)), model.getCenterX()-4, model.getCenterY()+2);
             else gc.fillText("?", model.getCenterX()-4, model.getCenterY()+2);
         }
-    }
-    public int getMovementSpeed(){
-        return movementSpeed;
-    }
-    public String getStatus(){
-        return status;
-    }
-    public void setStatus(String status){
-        this.status=status;
-    }
-    public void movmentYY(int y){
-        if (y < model.getCenterY()) {
-            model.setCenterY(model.getCenterY() - 1);
-        }
-        if (y > model.getCenterY()) {
-            model.setCenterY(model.getCenterY() + 1);
-        }
-    }
-    public void movmentXX(int x){
-        if (x < model.getCenterX()) {
-            model.setCenterX(model.getCenterX() - 1);
-        }
-        if (x > model.getCenterX()) {
-            model.setCenterX(model.getCenterX() + 1);
-        }
-    }
-    public boolean provGor(){
-        boolean fl=false;
-        int dx;
-        int i;
-        for (i=0;i!=Modeling.c.size();i++){
-            if (Modeling.c.indexOf(this)!=i) {
-                dx = Math.abs((int) (this.model.getCenterX() - Modeling.c.get(i).getModel().getCenterX()));
-                if (dx<=30) fl = true;
-            }
-        }
-        return fl;
     }
 
 }

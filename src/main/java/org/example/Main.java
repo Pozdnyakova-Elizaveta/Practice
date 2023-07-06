@@ -52,7 +52,7 @@ public class Main extends Application { //основной класс прило
         Text title=new Text("Имитационная модель магазина");
         Text numberCashier=new Text("Выберите число кассиров");
         Text numberCustomer=new Text("Выберите число покупателей");
-        Text numberShelf=new Text("Выберите количество полок с товарами");
+        Text numberShelf=new Text("Выберите количество стеллажей с товарами");
         Text numberConsultant=new Text("Выберите число консультантов");
         numberCustomer.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
         numberCustomer.setLayoutX(200);
@@ -104,7 +104,7 @@ public class Main extends Application { //основной класс прило
         choiceBoxCashier.setLayoutX(800);
         choiceBoxCashier.setLayoutY(180);
         choiceBoxCashier.setValue(1);
-        choiceBoxShelf = new ChoiceBox<Integer>(choiceShelf);               //выбор числа полок
+        choiceBoxShelf = new ChoiceBox<Integer>(choiceShelf);               //выбор числа стеллажей
         choiceBoxShelf.setLayoutX(800);
         choiceBoxShelf.setLayoutY(220);
         choiceBoxShelf.setValue(1);

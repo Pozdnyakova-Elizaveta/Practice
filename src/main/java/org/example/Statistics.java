@@ -15,6 +15,7 @@ public class Statistics {       //класс окна статистики
     static int exitCustomer;    //количество покупателей, не совершивших покупку
     static int notWaitingCustomer;  //количество покупателей, не дождавшихся помощи консультанта/выкладки товара
     static int highPriceCustomer;   //количество покупателей, не купивших товар из-за высокой цены
+    static int totalBuyer;
     public Statistics(){
         exitCustomer=0;
         notWaitingCustomer=0;
@@ -34,7 +35,7 @@ public class Statistics {       //класс окна статистики
         title.setLayoutY(70);
         title.setLayoutX(320);
         title.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
-        Text inf=new Text("Всего людей пришло: "+ Modeling.numberCustomer+"\n"+"Из них ушло без покупок: "+exitCustomer+"\n"+"Количество случаев, когда покупатель не дождался помощи консультанта/товара не было: "+notWaitingCustomer+"\n"+"Количество случаев, когда покупателю не хватило денег на товар: "+
+        Text inf=new Text("Всего людей пришло: "+ totalBuyer+"\n"+"Из них ушло без покупок: "+exitCustomer+"\n"+"Количество случаев, когда покупатель не дождался помощи консультанта/товара не было: "+notWaitingCustomer+"\n"+"Количество случаев, когда покупателю не хватило денег на товар: "+
                 highPriceCustomer+"\n\n"+"Работа касс:");
         Text cashier=new Text();
         for (int i=0; i!=Modeling.numberCashier;i++){

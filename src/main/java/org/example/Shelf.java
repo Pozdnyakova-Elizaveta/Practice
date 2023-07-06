@@ -8,19 +8,20 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 
 public class Shelf {
-    static String[] type=new String[]{"Хлеб","Молочные","Бакалея","Овощи","Фрукты", "Сладости","Напитки","Мясо"};
-    private String typeShelf;
-    private int numberGoods;
-    private int filling;
-    private ArrayList<Integer> price;
-    static int quantity;
-    static final int firstLine=470;
-    static final int secondLine=270;
-    private Rectangle model;
-    private Text text;
+    //Типы товаров
+    static final String[] TYPE=new String[]{"Хлеб","Молочные","Бакалея","Овощи","Фрукты", "Сладости","Напитки","Мясо"};
+    private String typeShelf;   //тип товаров на конкретном стеллаже
+    private int numberGoods;    //количество товаров
+    private int filling;        //номер консультанта, работающего со стеллажем
+    private ArrayList<Integer> price;   //цены на товары
+    static int quantity;                //число стеллажей
+    static final int firstLine=470;     //значение Y для расположения первой линии стеллажей
+    static final int secondLine=270;    //значение Y для расположения второй линии стеллажей
+    private Rectangle model;            //модель стеллажа
+    private Text text;                  //подпись типа товаров и их количества
     public Shelf(){
         filling=0;
-        typeShelf=type[quantity];
+        typeShelf=TYPE[quantity];
         numberGoods=(int)(Math.random()*10);
         price=new ArrayList<Integer>();
         for (int i=0;i!=numberGoods;i++){
@@ -58,8 +59,8 @@ public class Shelf {
     public int getSizePrice(){
         return price.size();
     }
-    public void setPrice(int n){
-        price.add(n);
+    public void setPrice(int i){
+        price.add(i);
     }
     public int getFilling(){
         return filling;
@@ -82,7 +83,7 @@ public class Shelf {
     public int getNumberGoods(){
         return numberGoods;
     }
-    public void setNumberGoods(int n){
-        this.numberGoods=n;
+    public void setNumberGoods(int numberGoods){
+        this.numberGoods=numberGoods;
     }
 }
