@@ -17,11 +17,11 @@ import javafx.scene.text.Text;
 import javafx.scene.Scene;
 
 public class Main extends Application { //основной класс приложения
-    Slider choiceCustomer;
-    Button start;
-    ChoiceBox<Integer> choiceBoxConsultant;
-    ChoiceBox<Integer> choiceBoxCashier;
-    ChoiceBox<Integer> choiceBoxShelf;
+    private Slider choiceCustomer;
+    private Button start;
+    private ChoiceBox<Integer> choiceBoxConsultant;
+    private ChoiceBox<Integer> choiceBoxCashier;
+    private ChoiceBox<Integer> choiceBoxShelf;
 
     public static void main(String[] args) {
         Application.launch(args);

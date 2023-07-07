@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class Shelf {
     //Типы товаров
-    static final String[] TYPE=new String[]{"Хлеб","Молочные","Бакалея","Овощи","Фрукты", "Сладости","Напитки","Мясо"};
+    static final String[] TYPE=new String[]{"Хлеб","Молоко","Бакалея","Овощи","Фрукты", "Сладости","Напитки","Мясо"};
     private String typeShelf;   //тип товаров на конкретном стеллаже
     private int numberGoods;    //количество товаров
     private int filling;        //номер консультанта, работающего со стеллажем
