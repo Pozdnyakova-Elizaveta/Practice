@@ -12,10 +12,10 @@ import javafx.stage.Stage;
 
 public class Statistics {       //класс окна статистики
     private Stage stage;    //графическое окно
-    static int exitCustomer;    //количество покупателей, не совершивших покупку
-    static int notWaitingCustomer;  //количество покупателей, не дождавшихся помощи консультанта/выкладки товара
-    static int highPriceCustomer;   //количество покупателей, не купивших товар из-за высокой цены
-    static int totalBuyer;
+    static private int exitCustomer;    //количество покупателей, не совершивших покупку
+    static private int notWaitingCustomer;  //количество покупателей, не дождавшихся помощи консультанта/выкладки товара
+    static private int highPriceCustomer;   //количество покупателей, не купивших товар из-за высокой цены
+    static private int totalBuyer;          //общее число покупателей
     public Statistics(){
         exitCustomer=0;
         notWaitingCustomer=0;
@@ -25,6 +25,18 @@ public class Statistics {       //класс окна статистики
         stage.setWidth(1200);
         stage.setHeight(700);
         stage.setResizable(false);
+    }
+    public static void addExitCustomer(){
+        exitCustomer++;
+    }
+    public static void addNotWaitingCustomer(){
+        notWaitingCustomer++;
+    }
+    public static void addHighPriceCustomer(){
+        highPriceCustomer++;
+    }
+    public static void addTotalBuyer(){
+        totalBuyer++;
     }
     public void display(int [] profit){     //функция вывода окна и его графических элементов
         stage.setOnCloseRequest(e -> {      //закрытие приложения при нажатии на крестик
@@ -40,7 +52,7 @@ public class Statistics {       //класс окна статистики
                 notWaitingCustomer+"\n"+"Количество случаев, когда покупателю не хватило денег на товар: "+
                 highPriceCustomer+"\n\n"+"Работа касс:");
         Text cashier=new Text();
-        for (int i=0; i!=Modeling.numberCashier;i++){
+        for (int i=0; i!=Modeling.getNumberCashier();i++){
             cashier.setText(cashier.getText()+"Касса "+(i+1)+": "+ profit[i]+" руб\n");
         }
         cashier.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));

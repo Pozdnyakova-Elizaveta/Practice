@@ -18,10 +18,10 @@ import java.util.TimerTask;
 
 public class Modeling { //класс окна, где происходит моделирование
     private Stage stage;   //графическое окно
-    static int numberCashier;   //выбранное количество кассиров
-    static int numberCustomer;  //выбранное количество покупателей
-    static int numberShelf;     //выбранное количество стеллажей
-    static int numberConsultant;    //выбранное количество консультантов
+    static private int numberCashier;   //выбранное количество кассиров
+    static private int numberCustomer;  //выбранное количество покупателей
+    static private int numberShelf;     //выбранное количество стеллажей
+    static private int numberConsultant;    //выбранное количество консультантов
     private ArrayList<Consultant> consultantList;    //массив с объектами-консультантами
     private ArrayList<Cashier> cashierList;       //массив с объектами-кассирами
     private ArrayList<Shelf> shelfList;          //массив с объектами-стеллажами
@@ -42,6 +42,9 @@ public class Modeling { //класс окна, где происходит мо�
         stage.setWidth(1200);
         stage.setHeight(700);
         stage.setResizable(false);
+    }
+    public static int getNumberCashier(){
+        return numberCashier;
     }
         public void modelingProcess() {  //основная функция моделирования
             Statistics statistics = new Statistics();   //создания объекта следующего окна для сбора статистики
@@ -137,7 +140,7 @@ public class Modeling { //класс окна, где происходит мо�
                 public void run() {
                     if (count != numberCustomer && !isPaused) { //если не созданы все покупатели и моделирование не на паузе
                         customerList.add(new Customer());  //добавление покупателя
-                        Statistics.totalBuyer++;
+                        Statistics.addTotalBuyer();
                         cicleCustomer(customerList.get(customerList.size() - 1));
                         count++;
                     }
@@ -207,7 +210,7 @@ public class Modeling { //класс окна, где происходит мо�
             shelfStock.setStrokeWidth(2);
             shelfStock.setStroke(Color.BLACK);
             //создание кассовой стойки
-            Rectangle cashRegister = new Rectangle(65, 100, 100 * Cashier.quantity, 40);
+            Rectangle cashRegister = new Rectangle(65, 100, 100 * Cashier.getQuantity(), 40);
             cashRegister.setFill(Color.BROWN);
             cashRegister.setStrokeWidth(2);
             cashRegister.setStroke(Color.BLACK);
@@ -243,7 +246,7 @@ public class Modeling { //класс окна, где происходит мо�
                                     if (queueSize == false) {   //если все очереди длинные для покупателя
                                         color = Color.RED;  //меняем цвет на красный
                                         cu.setStatus("exit");   //статус - выход
-                                        Statistics.exitCustomer += 1;
+                                        Statistics.addExitCustomer();
                                     }
                                     if (queueSize == true) {    //если есть допустимые очереди - статус поиск товаров
                                         cu.setStatus("product search");
@@ -283,14 +286,14 @@ public class Modeling { //класс окна, где происходит мо�
                             case "exit": {  //статус "выход"
                                 cu.colorChange(color); //изменение цвета покупателя
                                 //движение к выходу
-                                if (cu.getModel().getCenterY() != Customer.appearY && cu.getModel().getCenterX() != Customer.appearX)
-                                    cu.movementY(Shelf.secondLine - 90);
-                                if (cu.getModel().getCenterY() == Shelf.secondLine - 90 && cu.getModel().getCenterX() != Customer.appearX)
-                                    cu.movementX(Customer.appearX);
-                                if (cu.getModel().getCenterY() != Customer.appearY && cu.getModel().getCenterX() == Customer.appearX)
-                                    cu.movementY(Customer.appearY);
+                                if (cu.getModel().getCenterY() != Customer.getAppearY() && cu.getModel().getCenterX() != Customer.getAppearX())
+                                    cu.movementY(Shelf.getSecondLine() - 90);
+                                if (cu.getModel().getCenterY() == Shelf.getSecondLine() - 90 && cu.getModel().getCenterX() != Customer.getAppearX())
+                                    cu.movementX(Customer.getAppearX());
+                                if (cu.getModel().getCenterY() != Customer.getAppearY() && cu.getModel().getCenterX() == Customer.getAppearX())
+                                    cu.movementY(Customer.getAppearY());
                                 //если покупатель дошел до выхода - удаление из массива
-                                if (cu.getModel().getCenterY() == Customer.appearY) {
+                                if (cu.getModel().getCenterY() == Customer.getAppearY()) {
                                     customerList.remove(cu);
                                 }
                                 break;
@@ -301,14 +304,14 @@ public class Modeling { //класс окна, где происходит мо�
                                 //если у покупателя статус очереди и он находится на нужной кассе
                                 if (customerList.get(i).getStatus() == "queue" &&
                                         customerList.get(i).getModel().getCenterX() == cashierList.get(cu.getNumCheckout()).getModel().getCenterX()
-                                        && customerList.get(i).getModel().getCenterY() != Cashier.appearY + 90 + 35 * (customerList.get(i).getNumQueue() - 1))
-                                    if (customerList.get(i).getModel().getCenterY() >= Cashier.appearY + 90)
+                                        && customerList.get(i).getModel().getCenterY() != Cashier.getAppearY() + 90 + 35 * (customerList.get(i).getNumQueue() - 1))
+                                    if (customerList.get(i).getModel().getCenterY() >= Cashier.getAppearY() + 90)
                                         //он двигается по Y
-                                        customerList.get(i).movementY(Cashier.appearY + 90 + 35 * (customerList.get(i).getNumQueue() - 1));
+                                        customerList.get(i).movementY(Cashier.getAppearY() + 90 + 35 * (customerList.get(i).getNumQueue() - 1));
                                 //если теперь он находится на нужном месте
                                 if (customerList.get(i).getStatus() == "queue" &&
                                         customerList.get(i).getModel().getCenterX() == cashierList.get(cu.getNumCheckout()).getModel().getCenterX()
-                                        && customerList.get(i).getModel().getCenterY() == Cashier.appearY + 90 + 35 * (customerList.get(i).getNumQueue() - 1)) {
+                                        && customerList.get(i).getModel().getCenterY() == Cashier.getAppearY() + 90 + 35 * (customerList.get(i).getNumQueue() - 1)) {
                                     //меняем его номер в очереди
                                     customerList.get(i).setNumQueue(customerList.get(i).getNumQueue() - 1);
                                     //если появился новый первый покупатель в очереди - остановка движения

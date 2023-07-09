@@ -6,8 +6,8 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 
 public class Customer extends  MovingModel{ //класс покупателя
-    static final int appearX=750;           //координаты появления и удаления покупателя
-    static final int appearY=25;
+    static final private int APPEAR_X=750;           //координаты появления и удаления покупателя
+    static final private int APPEAR_Y=25;
     private int amountMoney;                //общее количество денег
     private int totalSpend;                 //потраченная сумма денег
     private boolean needHelp;               //флаг, нужна ли помощь консультанта
@@ -18,7 +18,7 @@ public class Customer extends  MovingModel{ //класс покупателя
     private ArrayList<String> productList;  //список товаров
     private int validQueue;                 //допустимый для покупателя размер очереди на кассу
     public Customer(){
-        super(25,appearX,appearY,Color.BLACK);
+        super(25,APPEAR_X,APPEAR_Y,Color.BLACK);
         totalSpend=0;
         filling=0;
         needHelp=false;
@@ -28,7 +28,13 @@ public class Customer extends  MovingModel{ //класс покупателя
         purchases=0;
         int sizeProductList=(int)(Math.random()*5+1);
         productList= new ArrayList<String>();
-        for (int i=0;i!=sizeProductList;i++) productList.add(Shelf.TYPE[(int)(Math.random()*8)]);
+        for (int i=0;i!=sizeProductList;i++) productList.add(Shelf.getType((int)(Math.random()*8)));
+    }
+    static public int getAppearY(){
+        return APPEAR_Y;
+    }
+    static public int getAppearX(){
+        return APPEAR_X;
     }
     public int getSizeProductList(){
         return productList.size();
@@ -73,10 +79,10 @@ public class Customer extends  MovingModel{ //класс покупателя
         return totalSpend;
     }
     public void movementCheckout(Cashier c){        //движение по траектории на кассу
-        if (model.getCenterY()!=Shelf.secondLine-40 && model.getCenterX()!=c.getModel().getCenterX()) {
-            movementY(Shelf.secondLine - 40);
+        if (model.getCenterY()!=Shelf.getSecondLine()-40 && model.getCenterX()!=c.getModel().getCenterX()) {
+            movementY(Shelf.getSecondLine() - 40);
         }
-        if (model.getCenterY()==Shelf.secondLine-40 && model.getCenterX()!=c.getModel().getCenterX())
+        if (model.getCenterY()==Shelf.getSecondLine()-40 && model.getCenterX()!=c.getModel().getCenterX())
             movementX((int)c.getModel().getCenterX());
         if (model.getCenterX()==c.getModel().getCenterX()) {
             movementY((int)c.getModel().getCenterY()+90+35*(c.getQueueBuyers()));
@@ -93,7 +99,7 @@ public class Customer extends  MovingModel{ //класс покупателя
         if (productList.size()==0) {    //если список товаров - пустой
             if (purchases==0) {         //и никакой товар не был взят - покупатель уходит
                 status = "exit";
-                Statistics.exitCustomer+=1;
+                Statistics.addExitCustomer();
             }
             else status="to checkout";  //иначе - статус "на кассу"
         }
@@ -117,12 +123,12 @@ public class Customer extends  MovingModel{ //класс покупателя
     }
     public void movementShelf(Shelf shelf){ //движение к стеллажу
         if (model.getCenterX()!=shelf.getModel().getX()+70){
-            if (model.getCenterY()!=Shelf.secondLine-120 && model.getCenterX()<=shelf.getModel().getX())
-                movementY(Shelf.secondLine-120);
-            if (model.getCenterY()!=Shelf.secondLine-60 && model.getCenterX()>shelf.getModel().getX())
-                movementY(Shelf.secondLine-60);
-            if ((model.getCenterY()==Shelf.secondLine-120 && model.getCenterX()<=shelf.getModel().getX() ) ||
-                    (model.getCenterY()==Shelf.secondLine-60 && model.getCenterX()>shelf.getModel().getX()))
+            if (model.getCenterY()!=Shelf.getSecondLine()-120 && model.getCenterX()<=shelf.getModel().getX())
+                movementY(Shelf.getSecondLine()-120);
+            if (model.getCenterY()!=Shelf.getSecondLine()-60 && model.getCenterX()>shelf.getModel().getX())
+                movementY(Shelf.getSecondLine()-60);
+            if ((model.getCenterY()==Shelf.getSecondLine()-120 && model.getCenterX()<=shelf.getModel().getX() ) ||
+                    (model.getCenterY()==Shelf.getSecondLine()-60 && model.getCenterX()>shelf.getModel().getX()))
                 movementX((int)shelf.getModel().getX()+70);
         }
         if (model.getCenterX()==shelf.getModel().getX()+70) movementY((int)shelf.getModel().getY()+movementSpeed*5);
@@ -133,7 +139,7 @@ public class Customer extends  MovingModel{ //класс покупателя
                 colorChange(Color.INDIGO);  //изменение цвета покупателя
                 while (System.currentTimeMillis() - start < 4000) {}    //задержка по времени
                 if (shelf.getNumberGoods() == 0) productList.remove(0); //если товар не принесли - удаление его из списка
-                Statistics.notWaitingCustomer+=1;
+                Statistics.addNotWaitingCustomer();
                 colorChange(Color.WHITE);
             }
             if (shelf.getNumberGoods()>0){  //стеллаж не пустой
@@ -146,13 +152,13 @@ public class Customer extends  MovingModel{ //класс покупателя
                         productList.remove(0);
                     }
                 }
-                if (needHelp==false) {  //если помощь не нужна - выбор товара
+                if (needHelp==false && shelf.getSizePrice()!=0) {  //если помощь не нужна - выбор товара
                     productSelection(shelf);
                 }
                 if (needHelp==true) { //сброс флага помощи
                     needHelp = false;
                     filling=0;
-                    Statistics.notWaitingCustomer+=1;
+                    Statistics.addNotWaitingCustomer();
                 }
             }
         }
@@ -181,7 +187,7 @@ public class Customer extends  MovingModel{ //класс покупателя
         }
         else {  //если минимальная цена больше количества денег
             colorChange(Color.YELLOW);  //изменение цвета покупателя
-            Statistics.highPriceCustomer += 1;
+            Statistics.addHighPriceCustomer();
             long start = System.currentTimeMillis();
             while (System.currentTimeMillis() - start < 500) {  //задержка по времени
             }
@@ -193,7 +199,7 @@ public class Customer extends  MovingModel{ //класс покупателя
     public void colorChange(Color color){   //изменение цвета внутренней части круга модели
         model.setFill(color);
     }
-    public void update(GraphicsContext gc){ //обновление канвы для перерисовки консультанта
+    public void update(GraphicsContext gc){ //обновление канвы для перерисовки покупателя
         gc.setStroke(model.getStroke());
         gc.setLineWidth(model.getStrokeWidth());
         gc.setFill(model.getFill()); // установка цвета заливки

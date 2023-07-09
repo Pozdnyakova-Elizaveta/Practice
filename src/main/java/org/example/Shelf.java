@@ -9,14 +9,14 @@ import java.util.ArrayList;
 
 public class Shelf {
     //Типы товаров
-    static final String[] TYPE=new String[]{"Хлеб","Молоко","Бакалея","Овощи","Фрукты", "Сладости","Напитки","Мясо"};
+    static final private String[] TYPE=new String[]{"Хлеб","Молоко","Бакалея","Овощи","Фрукты", "Сладости","Напитки","Мясо"};
     private String typeShelf;   //тип товаров на конкретном стеллаже
     private int numberGoods;    //количество товаров
     private int filling;        //номер консультанта, работающего со стеллажем
     private ArrayList<Integer> price;   //цены на товары
-    static int quantity;                //число стеллажей
-    static final int firstLine=470;     //значение Y для расположения первой линии стеллажей
-    static final int secondLine=270;    //значение Y для расположения второй линии стеллажей
+    static private int quantity;                //число стеллажей
+    static final private int FIRST_LINE=470;     //значение Y для расположения первой линии стеллажей
+    static final private int SECOND_LINE=270;    //значение Y для расположения второй линии стеллажей
     private Rectangle model;            //модель стеллажа
     private Text text;                  //подпись типа товаров и их количества
     public Shelf(){
@@ -32,13 +32,13 @@ public class Shelf {
         text.setFont(Font.font(14));
         model=new Rectangle();
         if (quantity<4) {
-            model.setY(firstLine);
+            model.setY(FIRST_LINE);
             model.setX(quantity*200+400);
             text.setX(model.getX()-20);
             text.setY(model.getY()+100);
         }
         else {
-            model.setY(secondLine);
+            model.setY(SECOND_LINE);
             model.setX((quantity-4)*200+400);
             text.setX(model.getX()-20);
             text.setY(model.getY()+100);
@@ -50,6 +50,15 @@ public class Shelf {
         model.setStroke(Color.BLACK);
         quantity++;
     }
+    static public String getType(int i){
+        return TYPE[i];
+    }
+    static public int getFirstLine(){
+        return FIRST_LINE;
+    }
+    static public int getSecondLine(){
+        return SECOND_LINE;
+    }
     public int getPrice(int i){
         return price.get(i);
     }
@@ -59,8 +68,8 @@ public class Shelf {
     public int getSizePrice(){
         return price.size();
     }
-    public void setPrice(int i){
-        price.add(i);
+    public void setPrice(int price){
+        this.price.add(price);
     }
     public int getFilling(){
         return filling;

@@ -4,9 +4,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 public class Cashier {
-    static int quantity;        //количество кассиров
+    static private int quantity;        //количество кассиров
     private int profit;         //прибыль
-    static final int appearY=75;    //расположение по Y
+    static final private int APPEAR_Y=75;    //расположение по Y
     private int queueBuyers;        //очередь к кассиру
     private int serviceTime;        //время обслуживания покупателя
     private int numberBuyers;       //число обслуженных покупателей
@@ -17,12 +17,18 @@ public class Cashier {
         serviceTime=(int)(Math.random()*2000)+3000;
         model=new Circle();
         model.setCenterX(100+quantity*100);
-        model.setCenterY(appearY);
+        model.setCenterY(APPEAR_Y);
         model.setRadius(15);
         model.setFill(Color.WHITE);
         model.setStrokeWidth(2);
         model.setStroke(Color.BLACK);
         quantity++;
+    }
+    static public int getAppearY(){
+        return  APPEAR_Y;
+    }
+    static public int getQuantity(){
+        return quantity;
     }
     public Circle getModel(){
         return  model;

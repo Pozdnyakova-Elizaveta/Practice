@@ -4,10 +4,10 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class Consultant extends MovingModel {   //класс консультанта
-    static int quantity;        //количество консультантов
-    static final int appearY=75;    //появление консультанта по Y
+    static private int quantity;        //количество консультантов
+    static final private int APPEAR_Y=75;    //появление консультанта по Y
     public Consultant(){
-        super(10,850+quantity*50,appearY,Color.DARKRED);
+        super(10,850+quantity*50,APPEAR_Y,Color.DARKRED);
         status="wait";
         quantity++;
     }
@@ -30,16 +30,16 @@ public class Consultant extends MovingModel {   //класс консульта�
             while (System.currentTimeMillis()-start<1000){} //задержка по времени
             status = "to shelf";    //статус "к стеллажу"
         }
-        if (model.getCenterY()!=Shelf.secondLine-30 && model.getCenterX()!=120) {
-            movementY(Shelf.secondLine - 30);
+        if (model.getCenterY()!=Shelf.getSecondLine()-30 && model.getCenterX()!=120) {
+            movementY(Shelf.getSecondLine() - 30);
        }
-       if (model.getCenterY() == Shelf.secondLine - 30) movementX(120);
+       if (model.getCenterY() == Shelf.getSecondLine() - 30) movementX(120);
    }
    public void toShelf(Shelf shelf){        //движение по траектории к стеллажу
-       if (model.getCenterY()!=Shelf.firstLine-30 && model.getCenterX()!=shelf.getModel().getX()+70) {
-           movementY(Shelf.firstLine-30);
+       if (model.getCenterY()!=Shelf.getFirstLine()-30 && model.getCenterX()!=shelf.getModel().getX()+70) {
+           movementY(Shelf.getFirstLine()-30);
        }
-       if (model.getCenterY()==Shelf.firstLine-30) movementX((int)shelf.getModel().getX()+70);
+       if (model.getCenterY()==Shelf.getFirstLine()-30) movementX((int)shelf.getModel().getX()+70);
        if (model.getCenterX()==shelf.getModel().getX()+70) movementY((int)shelf.getModel().getY()+80);
        if (model.getCenterX()==shelf.getModel().getX()+70 && model.getCenterY()==shelf.getModel().getY()+80) {
            //когда консультант у стеллажа
@@ -55,10 +55,10 @@ public class Consultant extends MovingModel {   //класс консульта�
        }
    }
    public void help(Customer c){    //движение по траектории к покупателю, нуждающемуся в помощи
-       if (model.getCenterY()!=Shelf.secondLine-30&& model.getCenterX()!=c.getModel().getCenterX()+40) {
-           movementY(Shelf.secondLine - 30);
+       if (model.getCenterY()!=Shelf.getSecondLine()-30&& model.getCenterX()!=c.getModel().getCenterX()+40) {
+           movementY(Shelf.getSecondLine() - 30);
        }
-       if (model.getCenterY()==Shelf.secondLine-30 && model.getCenterX()!=c.getModel().getCenterX()+40)
+       if (model.getCenterY()==Shelf.getSecondLine()-30 && model.getCenterX()!=c.getModel().getCenterX()+40)
            movementX((int)c.getModel().getCenterX()+40);
        if (model.getCenterX()==c.getModel().getCenterX()+40) movementY((int)c.getModel().getCenterY());
        if (model.getCenterY()==c.getModel().getCenterY() && model.getCenterX()==c.getModel().getCenterX()+40){
@@ -71,13 +71,13 @@ public class Consultant extends MovingModel {   //класс консульта�
        }
    }
    public void placeAppear(int index){    //возвращение консультанта к месту ожидания работы
-       if (model.getCenterY()==appearY && model.getCenterX()==850+index*50) {
+       if (model.getCenterY()==APPEAR_Y && model.getCenterX()==850+index*50) {
            status = "wait"; //статус "ожидание"
        }
-       if (model.getCenterX()==850+index*50) movementY(appearY);
-       if (model.getCenterY()!=Shelf.secondLine-30&& model.getCenterX()!=850+index*50) {
-           movementY(Shelf.secondLine - 30);
+       if (model.getCenterX()==850+index*50) movementY(APPEAR_Y);
+       if (model.getCenterY()!=Shelf.getSecondLine()-30&& model.getCenterX()!=850+index*50) {
+           movementY(Shelf.getSecondLine() - 30);
        }
-       if (model.getCenterY() == Shelf.secondLine - 30) movementX(850+index*50);
+       if (model.getCenterY() == Shelf.getSecondLine() - 30) movementX(850+index*50);
    }
 }
